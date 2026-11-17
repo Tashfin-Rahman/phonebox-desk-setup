@@ -83,6 +83,26 @@ Claude Code permission prompts (Allow / Deny) also appear on the phone.
 
 ---
 
+## 🔗 Where this comes from, and what I changed
+
+**Original source:** [ersinkoc/phonebox](https://github.com/ersinkoc/phonebox) by **Ersin Koç** (MIT License).
+PhoneBox supplies the Android app, the Windows agent, every widget and the rules engine. **I didn't modify PhoneBox's
+code.** Everything in this repo runs on top of a normal PhoneBox install (version 0.9.14, checked against the source as of
+17 Nov 2026).
+
+**What I made and changed, compared with PhoneBox's default setup:**
+
+| | PhoneBox default | My setup |
+|---|---|---|
+| Pages | 9 (Home, AI quotas, Sessions, System, Processes, Shortcuts, Music, Focus, World) | **17**: added Live (+5 app versions), Study, Gaming, Game deck, Night; merged AI quotas + Sessions into **AI work**; replaced Focus with **Study** |
+| Buttons | 12 | **67**: per-app key sets for YouTube/Opera, Spotify, Discord, Claude & code, study apps; Discord/Opera GX launchers; Claude Code launcher |
+| Automation rules | 0 | **12**: AI → AI work, game → Gaming, study hours, Night, CPU/ping alerts, and **5 app-in-front rules** that make the Live buttons follow the app I'm using |
+| Activity tracking | — | **New**: [`right-now.ps1`](scripts/right-now.ps1) (what I'm doing now), [`today.ps1`](scripts/today.ps1) (daily PC screen time), [`open-windows.ps1`](scripts/open-windows.ps1) |
+| Home page | Clock, music, CPU/GPU/RAM/network | Added Claude usage rings (5-hour and weekly), "Right now" strip, ping in place of network |
+| Weather | Tallinn | Dhaka |
+| Page switching | 15 s between switches, 20 s after a touch | 2 s and 6 s, so the buttons keep up with app changes |
+| Tools | — | [`build_config.py`](config/build_config.py): rebuilds the whole setup from readable code |
+
 ## 🚀 Use it yourself
 
 1. Install [PhoneBox](https://github.com/ersinkoc/phonebox) on your PC and phone (see [docs/phone-setup.md](docs/phone-setup.md)).
@@ -101,7 +121,7 @@ Tested on PhoneBox **0.9.14**. Change the button keys, app names and study hours
 - [Phone as a webcam](docs/webcam.md)
 
 ## 🙏 Credits
-- [PhoneBox](https://github.com/ersinkoc/phonebox) by ersinkoc (MIT): the app this setup runs on.
+- [PhoneBox](https://github.com/ersinkoc/phonebox), Copyright (c) 2026 Ersin Koç, MIT License: the app this setup runs on.
 - Built with help from Claude.
 
 MIT License © 2026 Tashfin Rahman

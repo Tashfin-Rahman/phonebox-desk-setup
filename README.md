@@ -14,17 +14,22 @@ rules. You can import it into your own PhoneBox.
 
 ## ✨ What I built
 
-### 🖥️ App-aware Live page
-The panel follows the app that's in front on my PC and swaps its 8 buttons to match, about a second after I switch apps.
+### 🖥️ One Live page with smart buttons
+A single Live page. Its 8 buttons swap by themselves to match the app in front on my PC, without changing pages.
+The tracker script reports the app to PhoneBox ([`/api/push/front`](scripts/right-now.ps1)), and a custom HTML widget
+([`smart-buttons.html`](scripts/smart-buttons.html)) shows that app's buttons.
 
 ```mermaid
 flowchart LR
-    PC[App in front on the PC] --> R{PhoneBox rule}
-    R -->|Opera / Chrome| O[📺 YouTube & tab keys]
+    PC[App in front on the PC] --> T[right-now.ps1 pushes the app name]
+    T --> R{smart-buttons.html}
+    R -->|YouTube| Y[📺 Play, ±10s, fullscreen, next]
+    R -->|Other sites| O[🌐 Back, reload, tabs, zoom]
     R -->|Spotify| S[🎧 Play, skip, like, shuffle]
     R -->|Discord| D[💬 Mute, deafen, answer call]
     R -->|Claude / VS Code / Terminal| C[💻 Enter, Esc, /usage, /clear]
     R -->|Word / PowerPoint / PDF| W[📚 Slides, zoom, save, find]
+    R -->|CS2 / FC| G[🎮 Discord mic, clip, Game Bar]
     R -->|Anything else| X[🖥️ Switch app, desktop, snip, lock]
 ```
 
@@ -55,12 +60,12 @@ Tracked today: 4 h 00 m
 Privacy: it stores only the time and the app category (`17:12,YouTube`), in a local file
 (`%LOCALAPPDATA%\PhoneBox\activity\`). Nothing is uploaded, and there are no screenshots or keystrokes.
 
-### 📄 All 17 pages
+### 📄 All 12 pages
 
 | Page | What's on it |
 |---|---|
 | 🏠 Home | Clock, Dhaka weather, now playing, CPU / GPU / RAM / ping, Claude usage rings, "Right now" |
-| 🖥️ Live (+5 app versions) | Right now, now playing, today's screen time, open windows, app-aware buttons |
+| 🖥️ Live | Right now, now playing, today's screen time, open windows, smart buttons |
 | 📚 Study | Pomodoro 25/5, daily task checklist, exam note, time progress, break timer |
 | 🎮 Gaming | GPU details, CPU+GPU graph, ping, launch Discord / Opera GX / Spotify |
 | 🎧 Game deck | Push-to-talk, panic mute, Discord mute/deafen, clip last 30 s, soundboard |
@@ -73,9 +78,8 @@ Privacy: it stores only the time and the app category (`17:12,YouTube`), in a lo
 | When… | Then… |
 |---|---|
 | Claude Code needs my input | Jump to **AI work** |
-| CS2 / FC25 / FC26 runs for 10 s | Jump to **Gaming** |
 | 7–10 pm, Sunday to Thursday | Show **Study** |
-| I switch apps on the PC | Show that app's **Live** buttons |
+| I switch apps on the PC | The Live page's **buttons** change (the page stays) |
 | Away 10 min, or 11:30 pm–7 am | Show **Night** |
 | CPU above 90 % or the internet is slow | Notification on the panel |
 
@@ -94,13 +98,13 @@ code.** Everything in this repo runs on top of a normal PhoneBox install (versio
 
 | | PhoneBox default | My setup |
 |---|---|---|
-| Pages | 9 (Home, AI quotas, Sessions, System, Processes, Shortcuts, Music, Focus, World) | **17**: added Live (+5 app versions), Study, Gaming, Game deck, Night; merged AI quotas + Sessions into **AI work**; replaced Focus with **Study** |
-| Buttons | 12 | **67**: per-app key sets for YouTube/Opera, Spotify, Discord, Claude & code, study apps; Discord/Opera GX launchers; Claude Code launcher |
-| Automation rules | 0 | **12**: AI → AI work, game → Gaming, study hours, Night, CPU/ping alerts, and **5 app-in-front rules** that make the Live buttons follow the app I'm using |
-| Activity tracking | — | **New**: [`right-now.ps1`](scripts/right-now.ps1) (what I'm doing now), [`today.ps1`](scripts/today.ps1) (daily PC screen time), [`open-windows.ps1`](scripts/open-windows.ps1) |
+| Pages | 9 (Home, AI quotas, Sessions, System, Processes, Shortcuts, Music, Focus, World) | **12**: added Live, Study, Gaming, Game deck, Night; merged AI quotas + Sessions into **AI work**; replaced Focus with **Study** |
+| Buttons | 12 | **69**: per-app key sets for YouTube, browser, Spotify, Discord, Claude & code, study apps, games; Discord/Opera GX launchers; Claude Code launcher |
+| Smart buttons | — | **New**: [`smart-buttons.html`](scripts/smart-buttons.html), one widget whose buttons follow the app in front |
+| Automation rules | 0 | **7** (6 on): AI → AI work, study hours, Night, CPU/ping alerts (game → Gaming is included but off) |
+| Activity tracking | — | **New**: [`right-now.ps1`](scripts/right-now.ps1) (what I'm doing now; also tells the smart buttons the app), [`today.ps1`](scripts/today.ps1) (daily PC screen time), [`open-windows.ps1`](scripts/open-windows.ps1) |
 | Home page | Clock, music, CPU/GPU/RAM/network | Added Claude usage rings (5-hour and weekly), "Right now" strip, ping in place of network |
 | Weather | Tallinn | Dhaka |
-| Page switching | 15 s between switches, 20 s after a touch | 2 s and 6 s, so the buttons keep up with app changes |
 | Tools | — | [`build_config.py`](config/build_config.py): rebuilds the whole setup from readable code |
 
 ## 🚀 Use it yourself

@@ -20,3 +20,4 @@ else{$i=0x1F5A5;$v=('Using '+$p);$app=$p}
 if($tl.Length -gt 70){$tl=$tl.Substring(0,67)+'...'}
 ($([char]::ConvertFromUtf32($i))+' '+$v); $tl
 if($app -ne 'Away'){$dir=Join-Path $env:LOCALAPPDATA 'PhoneBox\activity'; New-Item -ItemType Directory -Force $dir | Out-Null; Add-Content -Path (Join-Path $dir ((Get-Date -Format 'yyyy-MM-dd')+'.csv')) -Value ((Get-Date -Format 'HH:mm')+','+$app) -Encoding UTF8}
+$tmp=Join-Path $env:TEMP 'phonebox-front.txt'; if((Get-Content $tmp -EA SilentlyContinue) -ne $app){ Set-Content $tmp $app; try{ Invoke-RestMethod -Method Post -Uri 'http://127.0.0.1:8765/api/push/front' -ContentType 'application/json' -Body (ConvertTo-Json @{app=$app} -Compress) -TimeoutSec 2 | Out-Null }catch{} }

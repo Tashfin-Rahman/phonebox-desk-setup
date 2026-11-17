@@ -1,0 +1,26 @@
+<style>
+body{display:flex;flex-direction:column;padding:4px;box-sizing:border-box;gap:5px}
+.h{font-size:12px;opacity:.8;display:flex;justify-content:space-between;padding:0 4px}
+.g{flex:1;display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:repeat(2,1fr);gap:5px}
+button{border:0;border-radius:12px;background:var(--c);color:#fff;font:inherit;font-size:clamp(10px,4vh,14px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;transition:transform .08s,filter .2s;padding:2px}
+button b{font-size:clamp(15px,9vh,26px);font-weight:400}
+button:active{transform:scale(.93);filter:brightness(1.35)}
+</style>
+<div class="h"><b id="t"></b><span>follows the app in front</span></div>
+<div class="g" id="g"></div>
+<script>
+var SETS={
+ yt:['📺 YouTube','#b91c1c',[['yt-play','⏯️','Play/pause'],['yt-back','⏪','-10s'],['yt-fwd','⏩','+10s'],['yt-full','⛶','Fullscreen'],['yt-next','⏭️','Next video'],['yt-cap','💬','Captions'],['br-back','⬅️','Back'],['tab-next','➡️','Next tab']]],
+ web:['🌐 Browser','#0369a1',[['br-back','⬅️','Back'],['br-reload','🔄','Reload'],['br-newtab','➕','New tab'],['br-close','✖️','Close tab'],['tab-next','➡️','Next tab'],['dk-find','🔎','Find'],['dk-zin','🔍','Zoom in'],['dk-zout','➖','Zoom out']]],
+ sp:['🎧 Spotify','#15803d',[['sp-play','⏯️','Play/pause'],['sp-prev','⏮️','Previous'],['sp-next','⏭️','Next'],['sp-like','💚','Like'],['sp-shuffle','🔀','Shuffle'],['sp-repeat','🔁','Repeat'],['sp-volup','🔊','Vol +'],['sp-voldown','🔉','Vol -']]],
+ dc:['💬 Discord','#4752c4',[['dc-mute','🎙️','Mute mic'],['dc-deafen','🎧','Deafen'],['dc-switch','🔎','Quick switch'],['dc-read','✔️','Mark read'],['dc-answer','📞','Answer'],['dc-unread','📩','Next unread'],['dc-up','⬆️','Scroll up'],['dc-down','⬇️','Scroll down']]],
+ cd:['💻 Claude & code','#b45f3c',[['cd-enter','↩️','Enter'],['cd-esc','⏹️','Esc / stop'],['cd-ctrlc','✋','Ctrl+C'],['cd-up','⬆️','Previous'],['cd-usage','📊','/usage'],['cd-clear','🧹','/clear'],['cd-save','💾','Save'],['cd-undo','↩','Undo']]],
+ dk:['📚 Study apps','#b45309',[['dk-prev','◀️','Previous'],['dk-next','▶️','Next'],['dk-zin','➕','Zoom in'],['dk-zout','➖','Zoom out'],['dk-save','💾','Save'],['dk-undo','↩','Undo'],['dk-find','🔎','Find'],['dk-show','📽️','Slideshow']]],
+ gm:['🎮 Gaming','#7c3aed',[['dc-mute','🎙️','Discord mic'],['dc-deafen','🎧','Deafen'],['clip30','🎬','Clip 30s'],['gamebar','🎮','Game Bar'],['shot','📸','Screenshot'],['os-mute','🔇','Mute PC'],['alt-tab','🔀','Switch app'],['lock','🔒','Lock']]],
+ pc:['🖥️ PC','#475569',[['alt-tab','🔀','Switch app'],['os-desktop','🏠','Desktop'],['os-files','📁','Files'],['shot','📸','Screenshot'],['os-tasks','🗂️','Task view'],['os-snip','✂️','Snip'],['os-mute','🔇','Mute'],['lock','🔒','Lock']]]};
+var MAP={'YouTube':'yt','Browsing':'web','Spotify':'sp','Discord':'dc','Coding & AI':'cd','Study apps':'dk','Gaming':'gm'};
+var cur=null,g=document.getElementById('g'),t=document.getElementById('t');
+function render(k){var s=SETS[k]||SETS.pc;t.textContent=s[0];g.replaceChildren();s[2].forEach(function(b){var e=document.createElement('button');e.style.setProperty('--c',s[1]);var i=document.createElement('b');i.textContent=b[1];e.append(i,document.createTextNode(b[2]));e.onclick=function(){phonebox.run(b[0])};g.append(e)})}
+phonebox.on('push',function(p){var f=p&&p.front&&p.front.data;var k=MAP[(f&&f.app)||'']||'pc';if(k!==cur){cur=k;render(k)}});
+if(cur===null){cur='pc';render('pc')}
+</script>

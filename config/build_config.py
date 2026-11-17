@@ -60,10 +60,12 @@ launchers = [
     app("claudecode", "Start Claude Code", "⌨️", "powershell.exe", "#d97757", "-NoExit -Command claude"),
     app("claudeusage", "Claude usage", "📊", "https://claude.ai/settings/usage", "#b45f3c"),
     key("yt-cap", "Captions", "💬", "c", "#64748b"),
+    key("br-reload", "Reload", "🔄", "ctrl+r", "#0369a1"),
+    key("br-close", "Close tab", "✖️", "ctrl+w", "#0369a1"),
 ]
 
-# The Live page swaps its 8 buttons to match the app in front on the PC.
-# Each set = (page id, title, icon, color, process names for the rule, buttons)
+# Button sets used by the Live page's smart buttons (scripts/smart-buttons.html picks the set for the app in front).
+# Each set = (set id, title, icon, process names, buttons). Only the buttons are needed in the config.
 RED, GREEN, BLURPLE, CLAY, AMBER, SLATE = "#ef4444", "#1db954", "#5865f2", "#d97757", "#f59e0b", "#64748b"
 live_sets = [
     ("live-opera", "Live · Opera", "📺", "opera|chrome|msedge|brave|firefox", [
@@ -109,16 +111,14 @@ for s in launchers + [b for *_, buttons in live_sets for b in buttons]:
 RIGHT_NOW, TODAY, OPEN_WINDOWS = ps1("right-now.ps1"), ps1("today.ps1"), ps1("open-windows.ps1")
 
 
-def live_page(id, title, icon, buttons):
-    return page(id, title, icon,
-                W("now", "command", 0, 0, 6, 2, title="Right now", command=RIGHT_NOW, interval=10),
-                W("media", "media", 0, 2, 6, 2),
-                W("today", "command", 6, 0, 6, 4, title="Today on the PC", command=TODAY, interval=60),
-                W("windows", "command", 8, 4, 4, 2, title="Open on the PC", command=OPEN_WINDOWS, interval=5),
-                W("keys", "shortcuts", 0, 4, 8, 2, columns=4, ids=[b["id"] for b in buttons]))
+SMART_BUTTONS = (ROOT / "scripts" / "smart-buttons.html").read_text(encoding="utf-8").strip()
 
-
-lives = {pid: live_page(pid, title, icon, buttons) for pid, title, icon, _, buttons in live_sets}
+live = page("live", "Live", "🖥️",
+            W("now", "command", 0, 0, 6, 2, title="Right now", command=RIGHT_NOW, interval=5),
+            W("media", "media", 0, 2, 6, 2),
+            W("today", "command", 6, 0, 6, 4, title="Today on the PC", command=TODAY, interval=60),
+            W("buttons", "html", 0, 4, 8, 2, html=SMART_BUTTONS),
+            W("windows", "command", 8, 4, 4, 2, title="Open on the PC", command=OPEN_WINDOWS, interval=5))
 
 pages = [
     page("home", "Home", "🏠",
@@ -129,7 +129,7 @@ pages = [
          W("claude-5h", "quotaring", 8, 4, 2, 2, provider="claude", limit="0"),
          W("claude-week", "quotaring", 10, 4, 2, 2, provider="claude", limit="1"),
          W("now", "command", 0, 3, 6, 1, title="Right now", command=RIGHT_NOW, interval=10)),
-    lives["live"],
+    live,
     page("study", "Study", "📚",
          W("pomodoro", "pomodoro", 0, 0, 4, 6, focus=25, **{"break": 5}),
          W("checklist", "checklist", 4, 0, 4, 4, title="Today's tasks",
@@ -169,7 +169,7 @@ pages = [
          W("analog", "analog", 0, 0, 5, 6, seconds=False, numbers=True, zone="", label=""),
          W("wordclock", "wordclock", 5, 0, 7, 3),
          W("moon", "moon", 5, 3, 7, 3)),
-] + [lives[pid] for pid, *_ in live_sets if pid != "live"]
+]
 
 # ---------------------------------------------------------------- rules
 def rule(id, name, when, then="goto", priority=5, **extra):
@@ -179,7 +179,8 @@ def rule(id, name, when, then="goto", priority=5, **extra):
 
 rules = [
     rule("r-ai", "AI needs me → AI work", "session-waiting", page="ai", priority=8),
-    rule("r-game", "Game running → Gaming", "process-running", match="cs2|FC25|FC26", page="gaming", priority=6, forSec=10),
+    {**rule("r-game", "Game running → Gaming", "process-running", match="cs2|FC25|FC26", page="gaming", priority=6, forSec=10),
+     "enabled": False},  # off: pages don't follow apps any more
     rule("r-study", "Study hours → Study", "time", match="19:00-22:00", days="sun,mon,tue,wed,thu", page="study", priority=4),
     rule("r-cpu", "CPU working hard", "cpu-above", then="notify", value=90, text="PC is working hard: {detail}",
          level="warn", forSec=30, cooldownMin=15, priority=3),
@@ -187,15 +188,11 @@ rules = [
          level="warn", cooldownMin=10, priority=3),
     rule("r-afk", "Away 10 min → Night", "idle", value=10, page="night", priority=2),
     rule("r-late", "Late night → Night", "time", match="23:30-07:00", page="night", priority=2),
-] + [
-    rule("r-app-" + pid.split("-", 1)[1], f"In {title.replace('Live · ', '')} → its buttons", "app-in-front",
-         match=match, page=pid, priority=3, forSec=1, countdownSec=0)
-    for pid, title, _, match, _ in live_sets if match
 ]
 
 config = {
     "display": {"orientation": "landscape", "showSeconds": True, "hour12": False, "keepAwake": True,
-                "accent": "#2dd4bf", "switchCountdownSec": 3, "touchGraceSec": 6, "minDwellSec": 2, "holdMaxMin": 30},
+                "accent": "#2dd4bf", "switchCountdownSec": 3, "touchGraceSec": 20, "minDwellSec": 15, "holdMaxMin": 30},
     "night": {"enabled": True, "start": "00:30", "end": "07:30", "brightness": 0.02},
     "weather": {"city": "Dhaka", "lat": 23.8103, "lon": 90.4125},
     "claude": {"phoneApprovals": True, "timeoutSec": 90, "onlyWhenAway": False},

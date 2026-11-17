@@ -70,7 +70,8 @@ Privacy: it stores only the time and the app category (`17:12,YouTube`), in a lo
 | 🎮 Gaming | GPU details, CPU+GPU graph, ping, launch Discord / Opera GX / Spotify |
 | 🎧 Game deck | Push-to-talk, panic mute, Discord mute/deafen, clip last 30 s, soundboard |
 | ✳️ AI work | Claude usage, Claude Code sessions, Start Claude Code / usage buttons |
-| 📊 System · ⚙️ Processes · 🎛️ Shortcuts · 🎵 Music | PhoneBox defaults, lightly tuned |
+| 🎛️ Shortcuts | The 12 main buttons in a clean 6 × 2 grid: Discord, Opera GX, Spotify, Claude, VS Code, Terminal, Files, Task Manager, Snip, Mute, Screen off, Lock PC |
+| 📊 System · ⚙️ Processes · 🎵 Music | PhoneBox defaults, lightly tuned |
 | 🌙 Night | Analog clock, word clock, moon phase |
 
 ### 🤖 Automation rules

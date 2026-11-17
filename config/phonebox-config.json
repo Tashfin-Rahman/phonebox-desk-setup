@@ -551,7 +551,21 @@
           "w": 12,
           "h": 6,
           "options": {
-            "columns": 4
+            "columns": 6,
+            "ids": [
+              "discord",
+              "operagx",
+              "spotify",
+              "claudeai",
+              "vscode",
+              "terminal",
+              "explorer",
+              "taskmgr",
+              "snip",
+              "mute",
+              "monitoroff",
+              "lock"
+            ]
           }
         }
       ]
@@ -1276,7 +1290,7 @@
     },
     {
       "id": "lock",
-      "label": "Lock",
+      "label": "Lock PC",
       "icon": "🔒",
       "color": "#64748b",
       "cmd": "builtin:keys",

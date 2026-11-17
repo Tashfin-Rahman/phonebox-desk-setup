@@ -98,7 +98,7 @@ live_sets = [
         key("alt-tab", "Switch app", "🔀", "alt+tab", SLATE), key("os-desktop", "Show desktop", "🏠", "win+d", SLATE),
         key("os-files", "Files", "📁", "win+e", SLATE), key("shot", "Screenshot", "📸", "win+alt+printscreen", SLATE),
         key("os-tasks", "Task view", "🗂️", "win+tab", SLATE), key("os-snip", "Snip", "✂️", "win+shift+s", SLATE),
-        key("os-mute", "Mute", "🔇", "mute", SLATE), key("lock", "Lock", "🔒", "win+l", SLATE)]),
+        key("os-mute", "Mute", "🔇", "mute", SLATE), key("lock", "Lock PC", "🔒", "win+l", SLATE)]),
 ]
 
 shortcuts, seen = [], set()
@@ -156,7 +156,10 @@ pages = [
          W("chart", "chart", 0, 0, 6, 3, metrics=["cpu"]), W("chart-2", "chart", 6, 0, 6, 3, metrics=["gpu"]),
          W("meters", "meters", 0, 3, 6, 3), W("chart-3", "chart", 6, 3, 6, 3, metrics=["down", "up"])),
     page("procs", "Processes", "⚙️", W("processes", "processes", 0, 0, 12, 6)),
-    page("deck", "Shortcuts", "🎛️", W("shortcuts", "shortcuts", 0, 0, 12, 6, columns=4)),
+    page("deck", "Shortcuts", "🎛️",  # only the main 12, big and clean (6 × 2)
+         W("shortcuts", "shortcuts", 0, 0, 12, 6, columns=6,
+           ids=["discord", "operagx", "spotify", "claudeai", "vscode", "terminal",
+                "explorer", "taskmgr", "snip", "mute", "monitoroff", "lock"])),
     page("music", "Music", "🎵",
          W("media", "media", 0, 0, 8, 6),
          W("clock", "clock", 8, 0, 4, 2, status=False, weather=False),

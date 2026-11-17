@@ -594,17 +594,6 @@
           }
         },
         {
-          "id": "seek",
-          "type": "media-seek",
-          "x": 0,
-          "y": 4,
-          "w": 8,
-          "h": 2,
-          "options": {
-            "title": "Position"
-          }
-        },
-        {
           "id": "clock",
           "type": "clock",
           "x": 8,
@@ -625,6 +614,17 @@
           "h": 4,
           "options": {
             "mode": "daily"
+          }
+        },
+        {
+          "id": "seek",
+          "type": "media-seek",
+          "x": 0,
+          "y": 4,
+          "w": 8,
+          "h": 2,
+          "options": {
+            "title": "Position"
           }
         }
       ]

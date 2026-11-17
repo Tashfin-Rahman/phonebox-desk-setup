@@ -115,7 +115,7 @@ SMART_BUTTONS = (ROOT / "scripts" / "smart-buttons.html").read_text(encoding="ut
 
 live = page("live", "Live", "🖥️",
             W("now", "command", 0, 0, 6, 2, title="Right now", command=RIGHT_NOW, interval=5),
-            W("media", "media", 0, 2, 6, 2),
+            W("media", "media-remote", 0, 2, 6, 2, title="Now playing"),
             W("today", "command", 6, 0, 6, 4, title="Today on the PC", command=TODAY, interval=60),
             W("buttons", "html", 0, 4, 8, 2, html=SMART_BUTTONS),
             W("windows", "command", 8, 4, 4, 2, title="Open on the PC", command=OPEN_WINDOWS, interval=5))
@@ -123,7 +123,7 @@ live = page("live", "Live", "🖥️",
 pages = [
     page("home", "Home", "🏠",
          W("clock", "clock", 0, 0, 6, 3, status=True, weather=True),
-         W("media", "media", 6, 0, 6, 4),
+         W("media", "media-remote", 6, 0, 6, 4, title="Now playing"),  # no cover art: see README
          W("stat", "stat", 0, 4, 2, 2, metric="cpu"), W("stat-2", "stat", 2, 4, 2, 2, metric="gpu"),
          W("stat-3", "stat", 4, 4, 2, 2, metric="ram"), W("stat-4", "stat", 6, 4, 2, 2, metric="ping"),
          W("claude-5h", "quotaring", 8, 4, 2, 2, provider="claude", limit="0"),
@@ -161,7 +161,8 @@ pages = [
            ids=["discord", "operagx", "spotify", "claudeai", "vscode", "terminal",
                 "explorer", "taskmgr", "snip", "mute", "monitoroff", "lock"])),
     page("music", "Music", "🎵",
-         W("media", "media", 0, 0, 8, 6),
+         W("media", "media-remote", 0, 0, 8, 4, title="Now playing"),
+         W("seek", "media-seek", 0, 4, 8, 2, title="Position"),
          W("clock", "clock", 8, 0, 4, 2, status=False, weather=False),
          W("forecast", "forecast", 8, 2, 4, 4, mode="daily")),
     page("world", "World", "🌍",

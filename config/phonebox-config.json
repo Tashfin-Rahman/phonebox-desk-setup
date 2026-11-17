@@ -47,11 +47,14 @@
         },
         {
           "id": "media",
-          "type": "media",
+          "type": "media-remote",
           "x": 6,
           "y": 0,
           "w": 6,
-          "h": 4
+          "h": 4,
+          "options": {
+            "title": "Now playing"
+          }
         },
         {
           "id": "stat",
@@ -157,11 +160,14 @@
         },
         {
           "id": "media",
-          "type": "media",
+          "type": "media-remote",
           "x": 0,
           "y": 2,
           "w": 6,
-          "h": 2
+          "h": 2,
+          "options": {
+            "title": "Now playing"
+          }
         },
         {
           "id": "today",
@@ -578,11 +584,25 @@
       "widgets": [
         {
           "id": "media",
-          "type": "media",
+          "type": "media-remote",
           "x": 0,
           "y": 0,
           "w": 8,
-          "h": 6
+          "h": 4,
+          "options": {
+            "title": "Now playing"
+          }
+        },
+        {
+          "id": "seek",
+          "type": "media-seek",
+          "x": 0,
+          "y": 4,
+          "w": 8,
+          "h": 2,
+          "options": {
+            "title": "Position"
+          }
         },
         {
           "id": "clock",

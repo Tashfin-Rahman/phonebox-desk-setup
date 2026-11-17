@@ -24,5 +24,11 @@ If it's **Public**, the firewall rule from step 2 doesn't apply.
 Plug the phone in over USB for a minute, then unplug it. The status line on the phone should say **Wi-Fi**.
 
 ## Red "LOAD FAIL …/api/art" bar?
-An album cover failed to load once, and the warning stays until the panel reloads. Reopen the app, or run
-`POST http://127.0.0.1:8765/api/refresh?reload=true` from the PC.
+This is a PhoneBox bug, not a Wi-Fi problem. When the track changes while the panel is fetching the album cover, the
+PC answers 404 for the old cover. The Now Playing widget handles that fine, but PhoneBox's boot-error watcher also
+reports the failed `<img>` as a red bar that stays until the panel reloads.
+
+- **My workaround:** use `media-remote` ("Now playing" without cover art) instead of `media`, so no cover is ever requested.
+- **The real fix:** PhoneBox fixed it in **0.9.18** (#200): the box now ignores failed covers and photos. After
+  updating (the phone app updates over USB, so plug the phone in once), you can swap `media` back in.
+- **To clear it once:** reopen the app, or `POST http://127.0.0.1:8765/api/refresh?reload=true` from the PC.

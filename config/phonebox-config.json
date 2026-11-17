@@ -1,0 +1,1808 @@
+{
+  "display": {
+    "orientation": "landscape",
+    "showSeconds": true,
+    "hour12": false,
+    "keepAwake": true,
+    "accent": "#2dd4bf",
+    "switchCountdownSec": 3,
+    "touchGraceSec": 6,
+    "minDwellSec": 2,
+    "holdMaxMin": 30
+  },
+  "night": {
+    "enabled": true,
+    "start": "00:30",
+    "end": "07:30",
+    "brightness": 0.02
+  },
+  "weather": {
+    "city": "Dhaka",
+    "lat": 23.8103,
+    "lon": 90.4125
+  },
+  "claude": {
+    "phoneApprovals": true,
+    "timeoutSec": 90,
+    "onlyWhenAway": false
+  },
+  "pages": [
+    {
+      "id": "home",
+      "title": "Home",
+      "icon": "🏠",
+      "enabled": true,
+      "widgets": [
+        {
+          "id": "clock",
+          "type": "clock",
+          "x": 0,
+          "y": 0,
+          "w": 6,
+          "h": 3,
+          "options": {
+            "status": true,
+            "weather": true
+          }
+        },
+        {
+          "id": "media",
+          "type": "media",
+          "x": 6,
+          "y": 0,
+          "w": 6,
+          "h": 4
+        },
+        {
+          "id": "stat",
+          "type": "stat",
+          "x": 0,
+          "y": 4,
+          "w": 2,
+          "h": 2,
+          "options": {
+            "metric": "cpu"
+          }
+        },
+        {
+          "id": "stat-2",
+          "type": "stat",
+          "x": 2,
+          "y": 4,
+          "w": 2,
+          "h": 2,
+          "options": {
+            "metric": "gpu"
+          }
+        },
+        {
+          "id": "stat-3",
+          "type": "stat",
+          "x": 4,
+          "y": 4,
+          "w": 2,
+          "h": 2,
+          "options": {
+            "metric": "ram"
+          }
+        },
+        {
+          "id": "stat-4",
+          "type": "stat",
+          "x": 6,
+          "y": 4,
+          "w": 2,
+          "h": 2,
+          "options": {
+            "metric": "ping"
+          }
+        },
+        {
+          "id": "claude-5h",
+          "type": "quotaring",
+          "x": 8,
+          "y": 4,
+          "w": 2,
+          "h": 2,
+          "options": {
+            "provider": "claude",
+            "limit": "0"
+          }
+        },
+        {
+          "id": "claude-week",
+          "type": "quotaring",
+          "x": 10,
+          "y": 4,
+          "w": 2,
+          "h": 2,
+          "options": {
+            "provider": "claude",
+            "limit": "1"
+          }
+        },
+        {
+          "id": "now",
+          "type": "command",
+          "x": 0,
+          "y": 3,
+          "w": 6,
+          "h": 1,
+          "options": {
+            "title": "Right now",
+            "command": "$ErrorActionPreference='SilentlyContinue'\n$sig='[DllImport(\"user32.dll\")] public static extern IntPtr GetForegroundWindow(); [DllImport(\"user32.dll\")] public static extern int GetWindowThreadProcessId(IntPtr h, out int p); [DllImport(\"user32.dll\", CharSet=CharSet.Unicode)] public static extern int GetWindowText(IntPtr h, System.Text.StringBuilder s, int n); [StructLayout(LayoutKind.Sequential)] public struct LII { public uint cbSize; public uint dwTime; } [DllImport(\"user32.dll\")] public static extern bool GetLastInputInfo(ref LII l);'\nAdd-Type -Namespace PB -Name W -MemberDefinition $sig\n$h=[PB.W]::GetForegroundWindow(); $id=0; [void][PB.W]::GetWindowThreadProcessId($h,[ref]$id)\n$sb=New-Object Text.StringBuilder 512; [void][PB.W]::GetWindowText($h,$sb,512); $t=$sb.ToString(); $p=(Get-Process -Id $id).ProcessName\n$l=New-Object PB.W+LII; $l.cbSize=8; [void][PB.W]::GetLastInputInfo([ref]$l)\n$now=[BitConverter]::ToUInt32([BitConverter]::GetBytes([Environment]::TickCount),0); $d=[double]$now-[double]$l.dwTime; if($d -lt 0){$d+=4294967296}; $idle=$d/1000\n$tl=($t -replace '^\\(\\d+\\)\\s*','') -replace ' - (Opera|Google Chrome|Brave|Mozilla Firefox|Personal - Microsoft.*Edge)$',''\nif($idle -gt 180){$i=0x1F4A4;$v='Away from the PC';$app='Away';$tl=('idle for {0} min' -f [math]::Floor($idle/60))}\nelseif($t -match 'YouTube'){$i=0x1F4FA;$v='Watching';$app='YouTube';$tl=$tl -replace ' - YouTube$',''}\nelseif($p -match '^(cs2|FC2\\d|FC2\\d_Trial)$'){$i=0x1F3AE;$v='Playing';$app='Gaming'}\nelseif($p -eq 'Discord'){$i=0x1F4AC;$v='On Discord';$app='Discord'}\nelseif($t -match 'WhatsApp'){$i=0x1F4AC;$v='On WhatsApp';$app='WhatsApp'}\nelseif($p -eq 'Spotify'){$i=0x1F3A7;$v='On Spotify';$app='Spotify'}\nelseif($p -match '^(claude|Code|WindowsTerminal|powershell|pwsh)$'){$i=0x1F4BB;$v='Working with AI / code';$app='Coding & AI'}\nelseif($p -match '^(WINWORD|EXCEL|POWERPNT|Acrobat|AcroRd32|Notion|Obsidian)$'){$i=0x1F4DA;$v='Studying';$app='Study apps'}\nelseif($p -match '^(opera|chrome|msedge|brave|firefox)$'){$i=0x1F310;$v='Browsing';$app='Browsing'}\nelseif($p -eq 'explorer'){$i=0x1F5C2;$v='In File Explorer';$app='Other'}\nelse{$i=0x1F5A5;$v=('Using '+$p);$app=$p}\nif($tl.Length -gt 70){$tl=$tl.Substring(0,67)+'...'}\n($([char]::ConvertFromUtf32($i))+' '+$v); $tl\nif($app -ne 'Away'){$dir=Join-Path $env:LOCALAPPDATA 'PhoneBox\\activity'; New-Item -ItemType Directory -Force $dir | Out-Null; Add-Content -Path (Join-Path $dir ((Get-Date -Format 'yyyy-MM-dd')+'.csv')) -Value ((Get-Date -Format 'HH:mm')+','+$app) -Encoding UTF8}",
+            "interval": 10
+          }
+        }
+      ]
+    },
+    {
+      "id": "live",
+      "title": "Live",
+      "icon": "🖥️",
+      "enabled": true,
+      "widgets": [
+        {
+          "id": "now",
+          "type": "command",
+          "x": 0,
+          "y": 0,
+          "w": 6,
+          "h": 2,
+          "options": {
+            "title": "Right now",
+            "command": "$ErrorActionPreference='SilentlyContinue'\n$sig='[DllImport(\"user32.dll\")] public static extern IntPtr GetForegroundWindow(); [DllImport(\"user32.dll\")] public static extern int GetWindowThreadProcessId(IntPtr h, out int p); [DllImport(\"user32.dll\", CharSet=CharSet.Unicode)] public static extern int GetWindowText(IntPtr h, System.Text.StringBuilder s, int n); [StructLayout(LayoutKind.Sequential)] public struct LII { public uint cbSize; public uint dwTime; } [DllImport(\"user32.dll\")] public static extern bool GetLastInputInfo(ref LII l);'\nAdd-Type -Namespace PB -Name W -MemberDefinition $sig\n$h=[PB.W]::GetForegroundWindow(); $id=0; [void][PB.W]::GetWindowThreadProcessId($h,[ref]$id)\n$sb=New-Object Text.StringBuilder 512; [void][PB.W]::GetWindowText($h,$sb,512); $t=$sb.ToString(); $p=(Get-Process -Id $id).ProcessName\n$l=New-Object PB.W+LII; $l.cbSize=8; [void][PB.W]::GetLastInputInfo([ref]$l)\n$now=[BitConverter]::ToUInt32([BitConverter]::GetBytes([Environment]::TickCount),0); $d=[double]$now-[double]$l.dwTime; if($d -lt 0){$d+=4294967296}; $idle=$d/1000\n$tl=($t -replace '^\\(\\d+\\)\\s*','') -replace ' - (Opera|Google Chrome|Brave|Mozilla Firefox|Personal - Microsoft.*Edge)$',''\nif($idle -gt 180){$i=0x1F4A4;$v='Away from the PC';$app='Away';$tl=('idle for {0} min' -f [math]::Floor($idle/60))}\nelseif($t -match 'YouTube'){$i=0x1F4FA;$v='Watching';$app='YouTube';$tl=$tl -replace ' - YouTube$',''}\nelseif($p -match '^(cs2|FC2\\d|FC2\\d_Trial)$'){$i=0x1F3AE;$v='Playing';$app='Gaming'}\nelseif($p -eq 'Discord'){$i=0x1F4AC;$v='On Discord';$app='Discord'}\nelseif($t -match 'WhatsApp'){$i=0x1F4AC;$v='On WhatsApp';$app='WhatsApp'}\nelseif($p -eq 'Spotify'){$i=0x1F3A7;$v='On Spotify';$app='Spotify'}\nelseif($p -match '^(claude|Code|WindowsTerminal|powershell|pwsh)$'){$i=0x1F4BB;$v='Working with AI / code';$app='Coding & AI'}\nelseif($p -match '^(WINWORD|EXCEL|POWERPNT|Acrobat|AcroRd32|Notion|Obsidian)$'){$i=0x1F4DA;$v='Studying';$app='Study apps'}\nelseif($p -match '^(opera|chrome|msedge|brave|firefox)$'){$i=0x1F310;$v='Browsing';$app='Browsing'}\nelseif($p -eq 'explorer'){$i=0x1F5C2;$v='In File Explorer';$app='Other'}\nelse{$i=0x1F5A5;$v=('Using '+$p);$app=$p}\nif($tl.Length -gt 70){$tl=$tl.Substring(0,67)+'...'}\n($([char]::ConvertFromUtf32($i))+' '+$v); $tl\nif($app -ne 'Away'){$dir=Join-Path $env:LOCALAPPDATA 'PhoneBox\\activity'; New-Item -ItemType Directory -Force $dir | Out-Null; Add-Content -Path (Join-Path $dir ((Get-Date -Format 'yyyy-MM-dd')+'.csv')) -Value ((Get-Date -Format 'HH:mm')+','+$app) -Encoding UTF8}",
+            "interval": 10
+          }
+        },
+        {
+          "id": "media",
+          "type": "media",
+          "x": 0,
+          "y": 2,
+          "w": 6,
+          "h": 2
+        },
+        {
+          "id": "today",
+          "type": "command",
+          "x": 6,
+          "y": 0,
+          "w": 6,
+          "h": 4,
+          "options": {
+            "title": "Today on the PC",
+            "command": "$f=Join-Path $env:LOCALAPPDATA ('PhoneBox\\activity\\'+(Get-Date -Format 'yyyy-MM-dd')+'.csv')\nif(-not (Test-Path $f)){'Nothing tracked yet today.'; 'Keep the Home or Live page on screen.'; return}\n$rows=Get-Content $f -Encoding UTF8 | Where-Object {$_ -match ','} | ForEach-Object { $a=$_.Split(',',2); [pscustomobject]@{m=$a[0];a=$a[1]} }\n$mins=$rows | Group-Object m | ForEach-Object { ($_.Group | Group-Object a | Sort-Object Count -Descending | Select-Object -First 1).Name }\n$fmt={param($n) $h=[math]::Floor($n/60); $m=$n%60; if($h){'{0} h {1:D2} m' -f $h,$m}else{'{0} m' -f $m}}\n$mins | Group-Object | Sort-Object Count -Descending | Select-Object -First 7 | ForEach-Object { '{0,-12} {1}' -f $_.Name, (& $fmt $_.Count) }\n'----'; 'Tracked today: '+(& $fmt @($mins).Count)",
+            "interval": 60
+          }
+        },
+        {
+          "id": "windows",
+          "type": "command",
+          "x": 8,
+          "y": 4,
+          "w": 4,
+          "h": 2,
+          "options": {
+            "title": "Open on the PC",
+            "command": "Get-Process | Where-Object { $_.MainWindowTitle } | Sort-Object CPU -Descending | Select-Object -First 6 | ForEach-Object { '{0}: {1}' -f $_.ProcessName, $_.MainWindowTitle }",
+            "interval": 5
+          }
+        },
+        {
+          "id": "keys",
+          "type": "shortcuts",
+          "x": 0,
+          "y": 4,
+          "w": 8,
+          "h": 2,
+          "options": {
+            "columns": 4,
+            "ids": [
+              "alt-tab",
+              "os-desktop",
+              "os-files",
+              "shot",
+              "os-tasks",
+              "os-snip",
+              "os-mute",
+              "lock"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "study",
+      "title": "Study",
+      "icon": "📚",
+      "enabled": true,
+      "widgets": [
+        {
+          "id": "pomodoro",
+          "type": "pomodoro",
+          "x": 0,
+          "y": 0,
+          "w": 4,
+          "h": 6,
+          "options": {
+            "focus": 25,
+            "break": 5
+          }
+        },
+        {
+          "id": "checklist",
+          "type": "checklist",
+          "x": 4,
+          "y": 0,
+          "w": 4,
+          "h": 4,
+          "options": {
+            "title": "Today's tasks",
+            "items": [
+              "Revise class notes",
+              "Work on assignment",
+              "Read one chapter",
+              "Check NSU email"
+            ],
+            "daily": true
+          }
+        },
+        {
+          "id": "note",
+          "type": "note",
+          "x": 4,
+          "y": 4,
+          "w": 4,
+          "h": 2,
+          "options": {
+            "text": "Exam focus:\n• ",
+            "color": "#fbbf24"
+          }
+        },
+        {
+          "id": "clock",
+          "type": "clock",
+          "x": 8,
+          "y": 0,
+          "w": 4,
+          "h": 2,
+          "options": {
+            "status": false,
+            "weather": false
+          }
+        },
+        {
+          "id": "progress",
+          "type": "progress",
+          "x": 8,
+          "y": 2,
+          "w": 4,
+          "h": 2
+        },
+        {
+          "id": "timer",
+          "type": "timer",
+          "x": 8,
+          "y": 4,
+          "w": 4,
+          "h": 2,
+          "options": {
+            "label": "Break",
+            "presets": [
+              "5",
+              "10",
+              "15"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "gaming",
+      "title": "Gaming",
+      "icon": "🎮",
+      "enabled": true,
+      "widgets": [
+        {
+          "id": "gpu",
+          "type": "gpu",
+          "x": 0,
+          "y": 0,
+          "w": 4,
+          "h": 4
+        },
+        {
+          "id": "chart",
+          "type": "chart",
+          "x": 4,
+          "y": 0,
+          "w": 8,
+          "h": 3,
+          "options": {
+            "metrics": [
+              "cpu",
+              "gpu"
+            ]
+          }
+        },
+        {
+          "id": "shortcuts",
+          "type": "shortcuts",
+          "x": 4,
+          "y": 3,
+          "w": 8,
+          "h": 3,
+          "options": {
+            "columns": 4,
+            "ids": [
+              "discord",
+              "operagx",
+              "spotify",
+              "mute"
+            ]
+          }
+        },
+        {
+          "id": "stat",
+          "type": "stat",
+          "x": 0,
+          "y": 4,
+          "w": 2,
+          "h": 2,
+          "options": {
+            "metric": "ping"
+          }
+        },
+        {
+          "id": "stat-2",
+          "type": "stat",
+          "x": 2,
+          "y": 4,
+          "w": 2,
+          "h": 2,
+          "options": {
+            "metric": "ram"
+          }
+        }
+      ]
+    },
+    {
+      "id": "gamedeck",
+      "title": "Game deck",
+      "icon": "🎧",
+      "enabled": true,
+      "widgets": [
+        {
+          "id": "ptt",
+          "type": "push-to-talk",
+          "x": 0,
+          "y": 0,
+          "w": 4,
+          "h": 3,
+          "options": {
+            "title": "Hold to talk"
+          }
+        },
+        {
+          "id": "panic",
+          "type": "panic-mute",
+          "x": 0,
+          "y": 3,
+          "w": 4,
+          "h": 3,
+          "options": {
+            "title": "Mute everything"
+          }
+        },
+        {
+          "id": "keys",
+          "type": "shortcuts",
+          "x": 4,
+          "y": 0,
+          "w": 8,
+          "h": 4,
+          "options": {
+            "columns": 3,
+            "ids": [
+              "dc-mute",
+              "dc-deafen",
+              "clip30",
+              "gamebar",
+              "shot",
+              "discord"
+            ]
+          }
+        },
+        {
+          "id": "sounds",
+          "type": "soundboard",
+          "x": 4,
+          "y": 4,
+          "w": 8,
+          "h": 2,
+          "options": {
+            "title": "Soundboard"
+          }
+        }
+      ]
+    },
+    {
+      "id": "ai",
+      "title": "AI work",
+      "icon": "✳️",
+      "enabled": true,
+      "widgets": [
+        {
+          "id": "quotas",
+          "type": "quotas",
+          "x": 0,
+          "y": 0,
+          "w": 6,
+          "h": 6,
+          "options": {
+            "providers": [
+              "claude"
+            ],
+            "rotate": false,
+            "pageSize": 2,
+            "rotateInterval": 8
+          }
+        },
+        {
+          "id": "sessions",
+          "type": "sessions",
+          "x": 6,
+          "y": 0,
+          "w": 6,
+          "h": 4
+        },
+        {
+          "id": "claude-keys",
+          "type": "shortcuts",
+          "x": 6,
+          "y": 4,
+          "w": 6,
+          "h": 2,
+          "options": {
+            "columns": 3,
+            "ids": [
+              "claudecode",
+              "claudeusage",
+              "claudeai"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "system",
+      "title": "System",
+      "icon": "📊",
+      "enabled": true,
+      "widgets": [
+        {
+          "id": "chart",
+          "type": "chart",
+          "x": 0,
+          "y": 0,
+          "w": 6,
+          "h": 3,
+          "options": {
+            "metrics": [
+              "cpu"
+            ]
+          }
+        },
+        {
+          "id": "chart-2",
+          "type": "chart",
+          "x": 6,
+          "y": 0,
+          "w": 6,
+          "h": 3,
+          "options": {
+            "metrics": [
+              "gpu"
+            ]
+          }
+        },
+        {
+          "id": "meters",
+          "type": "meters",
+          "x": 0,
+          "y": 3,
+          "w": 6,
+          "h": 3
+        },
+        {
+          "id": "chart-3",
+          "type": "chart",
+          "x": 6,
+          "y": 3,
+          "w": 6,
+          "h": 3,
+          "options": {
+            "metrics": [
+              "down",
+              "up"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "procs",
+      "title": "Processes",
+      "icon": "⚙️",
+      "enabled": true,
+      "widgets": [
+        {
+          "id": "processes",
+          "type": "processes",
+          "x": 0,
+          "y": 0,
+          "w": 12,
+          "h": 6
+        }
+      ]
+    },
+    {
+      "id": "deck",
+      "title": "Shortcuts",
+      "icon": "🎛️",
+      "enabled": true,
+      "widgets": [
+        {
+          "id": "shortcuts",
+          "type": "shortcuts",
+          "x": 0,
+          "y": 0,
+          "w": 12,
+          "h": 6,
+          "options": {
+            "columns": 4
+          }
+        }
+      ]
+    },
+    {
+      "id": "music",
+      "title": "Music",
+      "icon": "🎵",
+      "enabled": true,
+      "widgets": [
+        {
+          "id": "media",
+          "type": "media",
+          "x": 0,
+          "y": 0,
+          "w": 8,
+          "h": 6
+        },
+        {
+          "id": "clock",
+          "type": "clock",
+          "x": 8,
+          "y": 0,
+          "w": 4,
+          "h": 2,
+          "options": {
+            "status": false,
+            "weather": false
+          }
+        },
+        {
+          "id": "forecast",
+          "type": "forecast",
+          "x": 8,
+          "y": 2,
+          "w": 4,
+          "h": 4,
+          "options": {
+            "mode": "daily"
+          }
+        }
+      ]
+    },
+    {
+      "id": "world",
+      "title": "World",
+      "icon": "🌍",
+      "enabled": false,
+      "widgets": [
+        {
+          "id": "worldclock",
+          "type": "worldclock",
+          "x": 0,
+          "y": 0,
+          "w": 12,
+          "h": 2
+        },
+        {
+          "id": "forecast",
+          "type": "forecast",
+          "x": 0,
+          "y": 2,
+          "w": 8,
+          "h": 4,
+          "options": {
+            "mode": "hourly"
+          }
+        },
+        {
+          "id": "calendar",
+          "type": "calendar",
+          "x": 8,
+          "y": 2,
+          "w": 4,
+          "h": 4
+        }
+      ]
+    },
+    {
+      "id": "night",
+      "title": "Night",
+      "icon": "🌙",
+      "enabled": true,
+      "widgets": [
+        {
+          "id": "analog",
+          "type": "analog",
+          "x": 0,
+          "y": 0,
+          "w": 5,
+          "h": 6,
+          "options": {
+            "seconds": false,
+            "numbers": true,
+            "zone": "",
+            "label": ""
+          }
+        },
+        {
+          "id": "wordclock",
+          "type": "wordclock",
+          "x": 5,
+          "y": 0,
+          "w": 7,
+          "h": 3
+        },
+        {
+          "id": "moon",
+          "type": "moon",
+          "x": 5,
+          "y": 3,
+          "w": 7,
+          "h": 3
+        }
+      ]
+    },
+    {
+      "id": "live-opera",
+      "title": "Live · Opera",
+      "icon": "📺",
+      "enabled": true,
+      "widgets": [
+        {
+          "id": "now",
+          "type": "command",
+          "x": 0,
+          "y": 0,
+          "w": 6,
+          "h": 2,
+          "options": {
+            "title": "Right now",
+            "command": "$ErrorActionPreference='SilentlyContinue'\n$sig='[DllImport(\"user32.dll\")] public static extern IntPtr GetForegroundWindow(); [DllImport(\"user32.dll\")] public static extern int GetWindowThreadProcessId(IntPtr h, out int p); [DllImport(\"user32.dll\", CharSet=CharSet.Unicode)] public static extern int GetWindowText(IntPtr h, System.Text.StringBuilder s, int n); [StructLayout(LayoutKind.Sequential)] public struct LII { public uint cbSize; public uint dwTime; } [DllImport(\"user32.dll\")] public static extern bool GetLastInputInfo(ref LII l);'\nAdd-Type -Namespace PB -Name W -MemberDefinition $sig\n$h=[PB.W]::GetForegroundWindow(); $id=0; [void][PB.W]::GetWindowThreadProcessId($h,[ref]$id)\n$sb=New-Object Text.StringBuilder 512; [void][PB.W]::GetWindowText($h,$sb,512); $t=$sb.ToString(); $p=(Get-Process -Id $id).ProcessName\n$l=New-Object PB.W+LII; $l.cbSize=8; [void][PB.W]::GetLastInputInfo([ref]$l)\n$now=[BitConverter]::ToUInt32([BitConverter]::GetBytes([Environment]::TickCount),0); $d=[double]$now-[double]$l.dwTime; if($d -lt 0){$d+=4294967296}; $idle=$d/1000\n$tl=($t -replace '^\\(\\d+\\)\\s*','') -replace ' - (Opera|Google Chrome|Brave|Mozilla Firefox|Personal - Microsoft.*Edge)$',''\nif($idle -gt 180){$i=0x1F4A4;$v='Away from the PC';$app='Away';$tl=('idle for {0} min' -f [math]::Floor($idle/60))}\nelseif($t -match 'YouTube'){$i=0x1F4FA;$v='Watching';$app='YouTube';$tl=$tl -replace ' - YouTube$',''}\nelseif($p -match '^(cs2|FC2\\d|FC2\\d_Trial)$'){$i=0x1F3AE;$v='Playing';$app='Gaming'}\nelseif($p -eq 'Discord'){$i=0x1F4AC;$v='On Discord';$app='Discord'}\nelseif($t -match 'WhatsApp'){$i=0x1F4AC;$v='On WhatsApp';$app='WhatsApp'}\nelseif($p -eq 'Spotify'){$i=0x1F3A7;$v='On Spotify';$app='Spotify'}\nelseif($p -match '^(claude|Code|WindowsTerminal|powershell|pwsh)$'){$i=0x1F4BB;$v='Working with AI / code';$app='Coding & AI'}\nelseif($p -match '^(WINWORD|EXCEL|POWERPNT|Acrobat|AcroRd32|Notion|Obsidian)$'){$i=0x1F4DA;$v='Studying';$app='Study apps'}\nelseif($p -match '^(opera|chrome|msedge|brave|firefox)$'){$i=0x1F310;$v='Browsing';$app='Browsing'}\nelseif($p -eq 'explorer'){$i=0x1F5C2;$v='In File Explorer';$app='Other'}\nelse{$i=0x1F5A5;$v=('Using '+$p);$app=$p}\nif($tl.Length -gt 70){$tl=$tl.Substring(0,67)+'...'}\n($([char]::ConvertFromUtf32($i))+' '+$v); $tl\nif($app -ne 'Away'){$dir=Join-Path $env:LOCALAPPDATA 'PhoneBox\\activity'; New-Item -ItemType Directory -Force $dir | Out-Null; Add-Content -Path (Join-Path $dir ((Get-Date -Format 'yyyy-MM-dd')+'.csv')) -Value ((Get-Date -Format 'HH:mm')+','+$app) -Encoding UTF8}",
+            "interval": 10
+          }
+        },
+        {
+          "id": "media",
+          "type": "media",
+          "x": 0,
+          "y": 2,
+          "w": 6,
+          "h": 2
+        },
+        {
+          "id": "today",
+          "type": "command",
+          "x": 6,
+          "y": 0,
+          "w": 6,
+          "h": 4,
+          "options": {
+            "title": "Today on the PC",
+            "command": "$f=Join-Path $env:LOCALAPPDATA ('PhoneBox\\activity\\'+(Get-Date -Format 'yyyy-MM-dd')+'.csv')\nif(-not (Test-Path $f)){'Nothing tracked yet today.'; 'Keep the Home or Live page on screen.'; return}\n$rows=Get-Content $f -Encoding UTF8 | Where-Object {$_ -match ','} | ForEach-Object { $a=$_.Split(',',2); [pscustomobject]@{m=$a[0];a=$a[1]} }\n$mins=$rows | Group-Object m | ForEach-Object { ($_.Group | Group-Object a | Sort-Object Count -Descending | Select-Object -First 1).Name }\n$fmt={param($n) $h=[math]::Floor($n/60); $m=$n%60; if($h){'{0} h {1:D2} m' -f $h,$m}else{'{0} m' -f $m}}\n$mins | Group-Object | Sort-Object Count -Descending | Select-Object -First 7 | ForEach-Object { '{0,-12} {1}' -f $_.Name, (& $fmt $_.Count) }\n'----'; 'Tracked today: '+(& $fmt @($mins).Count)",
+            "interval": 60
+          }
+        },
+        {
+          "id": "windows",
+          "type": "command",
+          "x": 8,
+          "y": 4,
+          "w": 4,
+          "h": 2,
+          "options": {
+            "title": "Open on the PC",
+            "command": "Get-Process | Where-Object { $_.MainWindowTitle } | Sort-Object CPU -Descending | Select-Object -First 6 | ForEach-Object { '{0}: {1}' -f $_.ProcessName, $_.MainWindowTitle }",
+            "interval": 5
+          }
+        },
+        {
+          "id": "keys",
+          "type": "shortcuts",
+          "x": 0,
+          "y": 4,
+          "w": 8,
+          "h": 2,
+          "options": {
+            "columns": 4,
+            "ids": [
+              "yt-play",
+              "yt-back",
+              "yt-fwd",
+              "yt-full",
+              "yt-next",
+              "br-back",
+              "br-newtab",
+              "tab-next"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "live-spotify",
+      "title": "Live · Spotify",
+      "icon": "🎧",
+      "enabled": true,
+      "widgets": [
+        {
+          "id": "now",
+          "type": "command",
+          "x": 0,
+          "y": 0,
+          "w": 6,
+          "h": 2,
+          "options": {
+            "title": "Right now",
+            "command": "$ErrorActionPreference='SilentlyContinue'\n$sig='[DllImport(\"user32.dll\")] public static extern IntPtr GetForegroundWindow(); [DllImport(\"user32.dll\")] public static extern int GetWindowThreadProcessId(IntPtr h, out int p); [DllImport(\"user32.dll\", CharSet=CharSet.Unicode)] public static extern int GetWindowText(IntPtr h, System.Text.StringBuilder s, int n); [StructLayout(LayoutKind.Sequential)] public struct LII { public uint cbSize; public uint dwTime; } [DllImport(\"user32.dll\")] public static extern bool GetLastInputInfo(ref LII l);'\nAdd-Type -Namespace PB -Name W -MemberDefinition $sig\n$h=[PB.W]::GetForegroundWindow(); $id=0; [void][PB.W]::GetWindowThreadProcessId($h,[ref]$id)\n$sb=New-Object Text.StringBuilder 512; [void][PB.W]::GetWindowText($h,$sb,512); $t=$sb.ToString(); $p=(Get-Process -Id $id).ProcessName\n$l=New-Object PB.W+LII; $l.cbSize=8; [void][PB.W]::GetLastInputInfo([ref]$l)\n$now=[BitConverter]::ToUInt32([BitConverter]::GetBytes([Environment]::TickCount),0); $d=[double]$now-[double]$l.dwTime; if($d -lt 0){$d+=4294967296}; $idle=$d/1000\n$tl=($t -replace '^\\(\\d+\\)\\s*','') -replace ' - (Opera|Google Chrome|Brave|Mozilla Firefox|Personal - Microsoft.*Edge)$',''\nif($idle -gt 180){$i=0x1F4A4;$v='Away from the PC';$app='Away';$tl=('idle for {0} min' -f [math]::Floor($idle/60))}\nelseif($t -match 'YouTube'){$i=0x1F4FA;$v='Watching';$app='YouTube';$tl=$tl -replace ' - YouTube$',''}\nelseif($p -match '^(cs2|FC2\\d|FC2\\d_Trial)$'){$i=0x1F3AE;$v='Playing';$app='Gaming'}\nelseif($p -eq 'Discord'){$i=0x1F4AC;$v='On Discord';$app='Discord'}\nelseif($t -match 'WhatsApp'){$i=0x1F4AC;$v='On WhatsApp';$app='WhatsApp'}\nelseif($p -eq 'Spotify'){$i=0x1F3A7;$v='On Spotify';$app='Spotify'}\nelseif($p -match '^(claude|Code|WindowsTerminal|powershell|pwsh)$'){$i=0x1F4BB;$v='Working with AI / code';$app='Coding & AI'}\nelseif($p -match '^(WINWORD|EXCEL|POWERPNT|Acrobat|AcroRd32|Notion|Obsidian)$'){$i=0x1F4DA;$v='Studying';$app='Study apps'}\nelseif($p -match '^(opera|chrome|msedge|brave|firefox)$'){$i=0x1F310;$v='Browsing';$app='Browsing'}\nelseif($p -eq 'explorer'){$i=0x1F5C2;$v='In File Explorer';$app='Other'}\nelse{$i=0x1F5A5;$v=('Using '+$p);$app=$p}\nif($tl.Length -gt 70){$tl=$tl.Substring(0,67)+'...'}\n($([char]::ConvertFromUtf32($i))+' '+$v); $tl\nif($app -ne 'Away'){$dir=Join-Path $env:LOCALAPPDATA 'PhoneBox\\activity'; New-Item -ItemType Directory -Force $dir | Out-Null; Add-Content -Path (Join-Path $dir ((Get-Date -Format 'yyyy-MM-dd')+'.csv')) -Value ((Get-Date -Format 'HH:mm')+','+$app) -Encoding UTF8}",
+            "interval": 10
+          }
+        },
+        {
+          "id": "media",
+          "type": "media",
+          "x": 0,
+          "y": 2,
+          "w": 6,
+          "h": 2
+        },
+        {
+          "id": "today",
+          "type": "command",
+          "x": 6,
+          "y": 0,
+          "w": 6,
+          "h": 4,
+          "options": {
+            "title": "Today on the PC",
+            "command": "$f=Join-Path $env:LOCALAPPDATA ('PhoneBox\\activity\\'+(Get-Date -Format 'yyyy-MM-dd')+'.csv')\nif(-not (Test-Path $f)){'Nothing tracked yet today.'; 'Keep the Home or Live page on screen.'; return}\n$rows=Get-Content $f -Encoding UTF8 | Where-Object {$_ -match ','} | ForEach-Object { $a=$_.Split(',',2); [pscustomobject]@{m=$a[0];a=$a[1]} }\n$mins=$rows | Group-Object m | ForEach-Object { ($_.Group | Group-Object a | Sort-Object Count -Descending | Select-Object -First 1).Name }\n$fmt={param($n) $h=[math]::Floor($n/60); $m=$n%60; if($h){'{0} h {1:D2} m' -f $h,$m}else{'{0} m' -f $m}}\n$mins | Group-Object | Sort-Object Count -Descending | Select-Object -First 7 | ForEach-Object { '{0,-12} {1}' -f $_.Name, (& $fmt $_.Count) }\n'----'; 'Tracked today: '+(& $fmt @($mins).Count)",
+            "interval": 60
+          }
+        },
+        {
+          "id": "windows",
+          "type": "command",
+          "x": 8,
+          "y": 4,
+          "w": 4,
+          "h": 2,
+          "options": {
+            "title": "Open on the PC",
+            "command": "Get-Process | Where-Object { $_.MainWindowTitle } | Sort-Object CPU -Descending | Select-Object -First 6 | ForEach-Object { '{0}: {1}' -f $_.ProcessName, $_.MainWindowTitle }",
+            "interval": 5
+          }
+        },
+        {
+          "id": "keys",
+          "type": "shortcuts",
+          "x": 0,
+          "y": 4,
+          "w": 8,
+          "h": 2,
+          "options": {
+            "columns": 4,
+            "ids": [
+              "sp-play",
+              "sp-prev",
+              "sp-next",
+              "sp-like",
+              "sp-shuffle",
+              "sp-repeat",
+              "sp-volup",
+              "sp-voldown"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "live-discord",
+      "title": "Live · Discord",
+      "icon": "💬",
+      "enabled": true,
+      "widgets": [
+        {
+          "id": "now",
+          "type": "command",
+          "x": 0,
+          "y": 0,
+          "w": 6,
+          "h": 2,
+          "options": {
+            "title": "Right now",
+            "command": "$ErrorActionPreference='SilentlyContinue'\n$sig='[DllImport(\"user32.dll\")] public static extern IntPtr GetForegroundWindow(); [DllImport(\"user32.dll\")] public static extern int GetWindowThreadProcessId(IntPtr h, out int p); [DllImport(\"user32.dll\", CharSet=CharSet.Unicode)] public static extern int GetWindowText(IntPtr h, System.Text.StringBuilder s, int n); [StructLayout(LayoutKind.Sequential)] public struct LII { public uint cbSize; public uint dwTime; } [DllImport(\"user32.dll\")] public static extern bool GetLastInputInfo(ref LII l);'\nAdd-Type -Namespace PB -Name W -MemberDefinition $sig\n$h=[PB.W]::GetForegroundWindow(); $id=0; [void][PB.W]::GetWindowThreadProcessId($h,[ref]$id)\n$sb=New-Object Text.StringBuilder 512; [void][PB.W]::GetWindowText($h,$sb,512); $t=$sb.ToString(); $p=(Get-Process -Id $id).ProcessName\n$l=New-Object PB.W+LII; $l.cbSize=8; [void][PB.W]::GetLastInputInfo([ref]$l)\n$now=[BitConverter]::ToUInt32([BitConverter]::GetBytes([Environment]::TickCount),0); $d=[double]$now-[double]$l.dwTime; if($d -lt 0){$d+=4294967296}; $idle=$d/1000\n$tl=($t -replace '^\\(\\d+\\)\\s*','') -replace ' - (Opera|Google Chrome|Brave|Mozilla Firefox|Personal - Microsoft.*Edge)$',''\nif($idle -gt 180){$i=0x1F4A4;$v='Away from the PC';$app='Away';$tl=('idle for {0} min' -f [math]::Floor($idle/60))}\nelseif($t -match 'YouTube'){$i=0x1F4FA;$v='Watching';$app='YouTube';$tl=$tl -replace ' - YouTube$',''}\nelseif($p -match '^(cs2|FC2\\d|FC2\\d_Trial)$'){$i=0x1F3AE;$v='Playing';$app='Gaming'}\nelseif($p -eq 'Discord'){$i=0x1F4AC;$v='On Discord';$app='Discord'}\nelseif($t -match 'WhatsApp'){$i=0x1F4AC;$v='On WhatsApp';$app='WhatsApp'}\nelseif($p -eq 'Spotify'){$i=0x1F3A7;$v='On Spotify';$app='Spotify'}\nelseif($p -match '^(claude|Code|WindowsTerminal|powershell|pwsh)$'){$i=0x1F4BB;$v='Working with AI / code';$app='Coding & AI'}\nelseif($p -match '^(WINWORD|EXCEL|POWERPNT|Acrobat|AcroRd32|Notion|Obsidian)$'){$i=0x1F4DA;$v='Studying';$app='Study apps'}\nelseif($p -match '^(opera|chrome|msedge|brave|firefox)$'){$i=0x1F310;$v='Browsing';$app='Browsing'}\nelseif($p -eq 'explorer'){$i=0x1F5C2;$v='In File Explorer';$app='Other'}\nelse{$i=0x1F5A5;$v=('Using '+$p);$app=$p}\nif($tl.Length -gt 70){$tl=$tl.Substring(0,67)+'...'}\n($([char]::ConvertFromUtf32($i))+' '+$v); $tl\nif($app -ne 'Away'){$dir=Join-Path $env:LOCALAPPDATA 'PhoneBox\\activity'; New-Item -ItemType Directory -Force $dir | Out-Null; Add-Content -Path (Join-Path $dir ((Get-Date -Format 'yyyy-MM-dd')+'.csv')) -Value ((Get-Date -Format 'HH:mm')+','+$app) -Encoding UTF8}",
+            "interval": 10
+          }
+        },
+        {
+          "id": "media",
+          "type": "media",
+          "x": 0,
+          "y": 2,
+          "w": 6,
+          "h": 2
+        },
+        {
+          "id": "today",
+          "type": "command",
+          "x": 6,
+          "y": 0,
+          "w": 6,
+          "h": 4,
+          "options": {
+            "title": "Today on the PC",
+            "command": "$f=Join-Path $env:LOCALAPPDATA ('PhoneBox\\activity\\'+(Get-Date -Format 'yyyy-MM-dd')+'.csv')\nif(-not (Test-Path $f)){'Nothing tracked yet today.'; 'Keep the Home or Live page on screen.'; return}\n$rows=Get-Content $f -Encoding UTF8 | Where-Object {$_ -match ','} | ForEach-Object { $a=$_.Split(',',2); [pscustomobject]@{m=$a[0];a=$a[1]} }\n$mins=$rows | Group-Object m | ForEach-Object { ($_.Group | Group-Object a | Sort-Object Count -Descending | Select-Object -First 1).Name }\n$fmt={param($n) $h=[math]::Floor($n/60); $m=$n%60; if($h){'{0} h {1:D2} m' -f $h,$m}else{'{0} m' -f $m}}\n$mins | Group-Object | Sort-Object Count -Descending | Select-Object -First 7 | ForEach-Object { '{0,-12} {1}' -f $_.Name, (& $fmt $_.Count) }\n'----'; 'Tracked today: '+(& $fmt @($mins).Count)",
+            "interval": 60
+          }
+        },
+        {
+          "id": "windows",
+          "type": "command",
+          "x": 8,
+          "y": 4,
+          "w": 4,
+          "h": 2,
+          "options": {
+            "title": "Open on the PC",
+            "command": "Get-Process | Where-Object { $_.MainWindowTitle } | Sort-Object CPU -Descending | Select-Object -First 6 | ForEach-Object { '{0}: {1}' -f $_.ProcessName, $_.MainWindowTitle }",
+            "interval": 5
+          }
+        },
+        {
+          "id": "keys",
+          "type": "shortcuts",
+          "x": 0,
+          "y": 4,
+          "w": 8,
+          "h": 2,
+          "options": {
+            "columns": 4,
+            "ids": [
+              "dc-mute",
+              "dc-deafen",
+              "dc-switch",
+              "dc-read",
+              "dc-answer",
+              "dc-unread",
+              "dc-up",
+              "dc-down"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "live-code",
+      "title": "Live · Claude & code",
+      "icon": "💻",
+      "enabled": true,
+      "widgets": [
+        {
+          "id": "now",
+          "type": "command",
+          "x": 0,
+          "y": 0,
+          "w": 6,
+          "h": 2,
+          "options": {
+            "title": "Right now",
+            "command": "$ErrorActionPreference='SilentlyContinue'\n$sig='[DllImport(\"user32.dll\")] public static extern IntPtr GetForegroundWindow(); [DllImport(\"user32.dll\")] public static extern int GetWindowThreadProcessId(IntPtr h, out int p); [DllImport(\"user32.dll\", CharSet=CharSet.Unicode)] public static extern int GetWindowText(IntPtr h, System.Text.StringBuilder s, int n); [StructLayout(LayoutKind.Sequential)] public struct LII { public uint cbSize; public uint dwTime; } [DllImport(\"user32.dll\")] public static extern bool GetLastInputInfo(ref LII l);'\nAdd-Type -Namespace PB -Name W -MemberDefinition $sig\n$h=[PB.W]::GetForegroundWindow(); $id=0; [void][PB.W]::GetWindowThreadProcessId($h,[ref]$id)\n$sb=New-Object Text.StringBuilder 512; [void][PB.W]::GetWindowText($h,$sb,512); $t=$sb.ToString(); $p=(Get-Process -Id $id).ProcessName\n$l=New-Object PB.W+LII; $l.cbSize=8; [void][PB.W]::GetLastInputInfo([ref]$l)\n$now=[BitConverter]::ToUInt32([BitConverter]::GetBytes([Environment]::TickCount),0); $d=[double]$now-[double]$l.dwTime; if($d -lt 0){$d+=4294967296}; $idle=$d/1000\n$tl=($t -replace '^\\(\\d+\\)\\s*','') -replace ' - (Opera|Google Chrome|Brave|Mozilla Firefox|Personal - Microsoft.*Edge)$',''\nif($idle -gt 180){$i=0x1F4A4;$v='Away from the PC';$app='Away';$tl=('idle for {0} min' -f [math]::Floor($idle/60))}\nelseif($t -match 'YouTube'){$i=0x1F4FA;$v='Watching';$app='YouTube';$tl=$tl -replace ' - YouTube$',''}\nelseif($p -match '^(cs2|FC2\\d|FC2\\d_Trial)$'){$i=0x1F3AE;$v='Playing';$app='Gaming'}\nelseif($p -eq 'Discord'){$i=0x1F4AC;$v='On Discord';$app='Discord'}\nelseif($t -match 'WhatsApp'){$i=0x1F4AC;$v='On WhatsApp';$app='WhatsApp'}\nelseif($p -eq 'Spotify'){$i=0x1F3A7;$v='On Spotify';$app='Spotify'}\nelseif($p -match '^(claude|Code|WindowsTerminal|powershell|pwsh)$'){$i=0x1F4BB;$v='Working with AI / code';$app='Coding & AI'}\nelseif($p -match '^(WINWORD|EXCEL|POWERPNT|Acrobat|AcroRd32|Notion|Obsidian)$'){$i=0x1F4DA;$v='Studying';$app='Study apps'}\nelseif($p -match '^(opera|chrome|msedge|brave|firefox)$'){$i=0x1F310;$v='Browsing';$app='Browsing'}\nelseif($p -eq 'explorer'){$i=0x1F5C2;$v='In File Explorer';$app='Other'}\nelse{$i=0x1F5A5;$v=('Using '+$p);$app=$p}\nif($tl.Length -gt 70){$tl=$tl.Substring(0,67)+'...'}\n($([char]::ConvertFromUtf32($i))+' '+$v); $tl\nif($app -ne 'Away'){$dir=Join-Path $env:LOCALAPPDATA 'PhoneBox\\activity'; New-Item -ItemType Directory -Force $dir | Out-Null; Add-Content -Path (Join-Path $dir ((Get-Date -Format 'yyyy-MM-dd')+'.csv')) -Value ((Get-Date -Format 'HH:mm')+','+$app) -Encoding UTF8}",
+            "interval": 10
+          }
+        },
+        {
+          "id": "media",
+          "type": "media",
+          "x": 0,
+          "y": 2,
+          "w": 6,
+          "h": 2
+        },
+        {
+          "id": "today",
+          "type": "command",
+          "x": 6,
+          "y": 0,
+          "w": 6,
+          "h": 4,
+          "options": {
+            "title": "Today on the PC",
+            "command": "$f=Join-Path $env:LOCALAPPDATA ('PhoneBox\\activity\\'+(Get-Date -Format 'yyyy-MM-dd')+'.csv')\nif(-not (Test-Path $f)){'Nothing tracked yet today.'; 'Keep the Home or Live page on screen.'; return}\n$rows=Get-Content $f -Encoding UTF8 | Where-Object {$_ -match ','} | ForEach-Object { $a=$_.Split(',',2); [pscustomobject]@{m=$a[0];a=$a[1]} }\n$mins=$rows | Group-Object m | ForEach-Object { ($_.Group | Group-Object a | Sort-Object Count -Descending | Select-Object -First 1).Name }\n$fmt={param($n) $h=[math]::Floor($n/60); $m=$n%60; if($h){'{0} h {1:D2} m' -f $h,$m}else{'{0} m' -f $m}}\n$mins | Group-Object | Sort-Object Count -Descending | Select-Object -First 7 | ForEach-Object { '{0,-12} {1}' -f $_.Name, (& $fmt $_.Count) }\n'----'; 'Tracked today: '+(& $fmt @($mins).Count)",
+            "interval": 60
+          }
+        },
+        {
+          "id": "windows",
+          "type": "command",
+          "x": 8,
+          "y": 4,
+          "w": 4,
+          "h": 2,
+          "options": {
+            "title": "Open on the PC",
+            "command": "Get-Process | Where-Object { $_.MainWindowTitle } | Sort-Object CPU -Descending | Select-Object -First 6 | ForEach-Object { '{0}: {1}' -f $_.ProcessName, $_.MainWindowTitle }",
+            "interval": 5
+          }
+        },
+        {
+          "id": "keys",
+          "type": "shortcuts",
+          "x": 0,
+          "y": 4,
+          "w": 8,
+          "h": 2,
+          "options": {
+            "columns": 4,
+            "ids": [
+              "cd-enter",
+              "cd-esc",
+              "cd-ctrlc",
+              "cd-up",
+              "cd-usage",
+              "cd-clear",
+              "cd-save",
+              "cd-undo"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "live-docs",
+      "title": "Live · Study apps",
+      "icon": "📚",
+      "enabled": true,
+      "widgets": [
+        {
+          "id": "now",
+          "type": "command",
+          "x": 0,
+          "y": 0,
+          "w": 6,
+          "h": 2,
+          "options": {
+            "title": "Right now",
+            "command": "$ErrorActionPreference='SilentlyContinue'\n$sig='[DllImport(\"user32.dll\")] public static extern IntPtr GetForegroundWindow(); [DllImport(\"user32.dll\")] public static extern int GetWindowThreadProcessId(IntPtr h, out int p); [DllImport(\"user32.dll\", CharSet=CharSet.Unicode)] public static extern int GetWindowText(IntPtr h, System.Text.StringBuilder s, int n); [StructLayout(LayoutKind.Sequential)] public struct LII { public uint cbSize; public uint dwTime; } [DllImport(\"user32.dll\")] public static extern bool GetLastInputInfo(ref LII l);'\nAdd-Type -Namespace PB -Name W -MemberDefinition $sig\n$h=[PB.W]::GetForegroundWindow(); $id=0; [void][PB.W]::GetWindowThreadProcessId($h,[ref]$id)\n$sb=New-Object Text.StringBuilder 512; [void][PB.W]::GetWindowText($h,$sb,512); $t=$sb.ToString(); $p=(Get-Process -Id $id).ProcessName\n$l=New-Object PB.W+LII; $l.cbSize=8; [void][PB.W]::GetLastInputInfo([ref]$l)\n$now=[BitConverter]::ToUInt32([BitConverter]::GetBytes([Environment]::TickCount),0); $d=[double]$now-[double]$l.dwTime; if($d -lt 0){$d+=4294967296}; $idle=$d/1000\n$tl=($t -replace '^\\(\\d+\\)\\s*','') -replace ' - (Opera|Google Chrome|Brave|Mozilla Firefox|Personal - Microsoft.*Edge)$',''\nif($idle -gt 180){$i=0x1F4A4;$v='Away from the PC';$app='Away';$tl=('idle for {0} min' -f [math]::Floor($idle/60))}\nelseif($t -match 'YouTube'){$i=0x1F4FA;$v='Watching';$app='YouTube';$tl=$tl -replace ' - YouTube$',''}\nelseif($p -match '^(cs2|FC2\\d|FC2\\d_Trial)$'){$i=0x1F3AE;$v='Playing';$app='Gaming'}\nelseif($p -eq 'Discord'){$i=0x1F4AC;$v='On Discord';$app='Discord'}\nelseif($t -match 'WhatsApp'){$i=0x1F4AC;$v='On WhatsApp';$app='WhatsApp'}\nelseif($p -eq 'Spotify'){$i=0x1F3A7;$v='On Spotify';$app='Spotify'}\nelseif($p -match '^(claude|Code|WindowsTerminal|powershell|pwsh)$'){$i=0x1F4BB;$v='Working with AI / code';$app='Coding & AI'}\nelseif($p -match '^(WINWORD|EXCEL|POWERPNT|Acrobat|AcroRd32|Notion|Obsidian)$'){$i=0x1F4DA;$v='Studying';$app='Study apps'}\nelseif($p -match '^(opera|chrome|msedge|brave|firefox)$'){$i=0x1F310;$v='Browsing';$app='Browsing'}\nelseif($p -eq 'explorer'){$i=0x1F5C2;$v='In File Explorer';$app='Other'}\nelse{$i=0x1F5A5;$v=('Using '+$p);$app=$p}\nif($tl.Length -gt 70){$tl=$tl.Substring(0,67)+'...'}\n($([char]::ConvertFromUtf32($i))+' '+$v); $tl\nif($app -ne 'Away'){$dir=Join-Path $env:LOCALAPPDATA 'PhoneBox\\activity'; New-Item -ItemType Directory -Force $dir | Out-Null; Add-Content -Path (Join-Path $dir ((Get-Date -Format 'yyyy-MM-dd')+'.csv')) -Value ((Get-Date -Format 'HH:mm')+','+$app) -Encoding UTF8}",
+            "interval": 10
+          }
+        },
+        {
+          "id": "media",
+          "type": "media",
+          "x": 0,
+          "y": 2,
+          "w": 6,
+          "h": 2
+        },
+        {
+          "id": "today",
+          "type": "command",
+          "x": 6,
+          "y": 0,
+          "w": 6,
+          "h": 4,
+          "options": {
+            "title": "Today on the PC",
+            "command": "$f=Join-Path $env:LOCALAPPDATA ('PhoneBox\\activity\\'+(Get-Date -Format 'yyyy-MM-dd')+'.csv')\nif(-not (Test-Path $f)){'Nothing tracked yet today.'; 'Keep the Home or Live page on screen.'; return}\n$rows=Get-Content $f -Encoding UTF8 | Where-Object {$_ -match ','} | ForEach-Object { $a=$_.Split(',',2); [pscustomobject]@{m=$a[0];a=$a[1]} }\n$mins=$rows | Group-Object m | ForEach-Object { ($_.Group | Group-Object a | Sort-Object Count -Descending | Select-Object -First 1).Name }\n$fmt={param($n) $h=[math]::Floor($n/60); $m=$n%60; if($h){'{0} h {1:D2} m' -f $h,$m}else{'{0} m' -f $m}}\n$mins | Group-Object | Sort-Object Count -Descending | Select-Object -First 7 | ForEach-Object { '{0,-12} {1}' -f $_.Name, (& $fmt $_.Count) }\n'----'; 'Tracked today: '+(& $fmt @($mins).Count)",
+            "interval": 60
+          }
+        },
+        {
+          "id": "windows",
+          "type": "command",
+          "x": 8,
+          "y": 4,
+          "w": 4,
+          "h": 2,
+          "options": {
+            "title": "Open on the PC",
+            "command": "Get-Process | Where-Object { $_.MainWindowTitle } | Sort-Object CPU -Descending | Select-Object -First 6 | ForEach-Object { '{0}: {1}' -f $_.ProcessName, $_.MainWindowTitle }",
+            "interval": 5
+          }
+        },
+        {
+          "id": "keys",
+          "type": "shortcuts",
+          "x": 0,
+          "y": 4,
+          "w": 8,
+          "h": 2,
+          "options": {
+            "columns": 4,
+            "ids": [
+              "dk-prev",
+              "dk-next",
+              "dk-zin",
+              "dk-zout",
+              "dk-save",
+              "dk-undo",
+              "dk-find",
+              "dk-show"
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "shortcuts": [
+    {
+      "id": "discord",
+      "label": "Discord",
+      "icon": "💬",
+      "color": "#5865f2",
+      "cmd": "C:\\Users\\user\\AppData\\Local\\Discord\\Update.exe",
+      "toggle": false,
+      "args": "--processStart Discord.exe"
+    },
+    {
+      "id": "operagx",
+      "label": "Opera GX",
+      "icon": "🦊",
+      "color": "#fa1e4e",
+      "cmd": "C:\\Users\\user\\AppData\\Local\\Programs\\Opera GX\\launcher.exe",
+      "toggle": false
+    },
+    {
+      "id": "claudeai",
+      "label": "Claude",
+      "icon": "✳️",
+      "color": "#d97757",
+      "cmd": "https://claude.ai",
+      "toggle": false
+    },
+    {
+      "id": "terminal",
+      "label": "Terminal",
+      "icon": "⌨️",
+      "color": "#4b5563",
+      "cmd": "wt.exe",
+      "toggle": false
+    },
+    {
+      "id": "explorer",
+      "label": "Files",
+      "icon": "📁",
+      "color": "#e5b84b",
+      "cmd": "explorer.exe",
+      "toggle": false
+    },
+    {
+      "id": "vscode",
+      "label": "VS Code",
+      "icon": "📝",
+      "color": "#2f80ed",
+      "cmd": "shell:AppsFolder\\Microsoft.VisualStudioCode",
+      "toggle": false
+    },
+    {
+      "id": "browser",
+      "label": "Browser",
+      "icon": "🌐",
+      "color": "#0ea5e9",
+      "cmd": "https://github.com",
+      "toggle": false
+    },
+    {
+      "id": "spotify",
+      "label": "Spotify",
+      "icon": "🎧",
+      "color": "#1db954",
+      "cmd": "shell:AppsFolder\\SpotifyAB.SpotifyMusic_zpdnekdrzrea0!Spotify",
+      "toggle": false
+    },
+    {
+      "id": "calc",
+      "label": "Calculator",
+      "icon": "🧮",
+      "color": "#64748b",
+      "cmd": "calc.exe",
+      "toggle": false
+    },
+    {
+      "id": "settings",
+      "label": "Settings",
+      "icon": "⚙️",
+      "color": "#94a3b8",
+      "cmd": "ms-settings:",
+      "toggle": false
+    },
+    {
+      "id": "snip",
+      "label": "Snip",
+      "icon": "✂️",
+      "color": "#14b8a6",
+      "cmd": "ms-screenclip:",
+      "toggle": false
+    },
+    {
+      "id": "taskmgr",
+      "label": "Task Manager",
+      "icon": "📊",
+      "color": "#22c55e",
+      "cmd": "taskmgr.exe",
+      "toggle": false
+    },
+    {
+      "id": "mute",
+      "label": "Mute",
+      "icon": "🔇",
+      "color": "#f59e0b",
+      "cmd": "builtin:mute",
+      "toggle": false
+    },
+    {
+      "id": "monitoroff",
+      "label": "Screen Off",
+      "icon": "🌙",
+      "color": "#6366f1",
+      "cmd": "builtin:monitor-off",
+      "toggle": false
+    },
+    {
+      "id": "clip30",
+      "label": "Clip last 30s",
+      "icon": "🎬",
+      "color": "#ef4444",
+      "cmd": "builtin:keys",
+      "args": "win+alt+g",
+      "toggle": false
+    },
+    {
+      "id": "gamebar",
+      "label": "Game Bar",
+      "icon": "🎮",
+      "color": "#22c55e",
+      "cmd": "builtin:keys",
+      "args": "win+g",
+      "toggle": false
+    },
+    {
+      "id": "claudecode",
+      "label": "Start Claude Code",
+      "icon": "⌨️",
+      "color": "#d97757",
+      "cmd": "powershell.exe",
+      "toggle": false,
+      "args": "-NoExit -Command claude"
+    },
+    {
+      "id": "claudeusage",
+      "label": "Claude usage",
+      "icon": "📊",
+      "color": "#b45f3c",
+      "cmd": "https://claude.ai/settings/usage",
+      "toggle": false
+    },
+    {
+      "id": "yt-cap",
+      "label": "Captions",
+      "icon": "💬",
+      "color": "#64748b",
+      "cmd": "builtin:keys",
+      "args": "c",
+      "toggle": false
+    },
+    {
+      "id": "yt-play",
+      "label": "Play / pause",
+      "icon": "⏯️",
+      "color": "#ef4444",
+      "cmd": "builtin:keys",
+      "args": "k",
+      "toggle": false
+    },
+    {
+      "id": "yt-back",
+      "label": "Back 10s",
+      "icon": "⏪",
+      "color": "#ef4444",
+      "cmd": "builtin:keys",
+      "args": "j",
+      "toggle": false
+    },
+    {
+      "id": "yt-fwd",
+      "label": "Forward 10s",
+      "icon": "⏩",
+      "color": "#ef4444",
+      "cmd": "builtin:keys",
+      "args": "l",
+      "toggle": false
+    },
+    {
+      "id": "yt-full",
+      "label": "Fullscreen",
+      "icon": "⛶",
+      "color": "#ef4444",
+      "cmd": "builtin:keys",
+      "args": "f",
+      "toggle": false
+    },
+    {
+      "id": "yt-next",
+      "label": "Next video",
+      "icon": "⏭️",
+      "color": "#ef4444",
+      "cmd": "builtin:keys",
+      "args": "shift+n",
+      "toggle": false
+    },
+    {
+      "id": "br-back",
+      "label": "Back",
+      "icon": "⬅️",
+      "color": "#ef4444",
+      "cmd": "builtin:keys",
+      "args": "alt+left",
+      "toggle": false
+    },
+    {
+      "id": "br-newtab",
+      "label": "New tab",
+      "icon": "➕",
+      "color": "#ef4444",
+      "cmd": "builtin:keys",
+      "args": "ctrl+t",
+      "toggle": false
+    },
+    {
+      "id": "tab-next",
+      "label": "Next tab",
+      "icon": "➡️",
+      "color": "#ef4444",
+      "cmd": "builtin:keys",
+      "args": "ctrl+tab",
+      "toggle": false
+    },
+    {
+      "id": "sp-play",
+      "label": "Play / pause",
+      "icon": "⏯️",
+      "color": "#1db954",
+      "cmd": "builtin:keys",
+      "args": "space",
+      "toggle": false
+    },
+    {
+      "id": "sp-prev",
+      "label": "Previous",
+      "icon": "⏮️",
+      "color": "#1db954",
+      "cmd": "builtin:keys",
+      "args": "ctrl+left",
+      "toggle": false
+    },
+    {
+      "id": "sp-next",
+      "label": "Next",
+      "icon": "⏭️",
+      "color": "#1db954",
+      "cmd": "builtin:keys",
+      "args": "ctrl+right",
+      "toggle": false
+    },
+    {
+      "id": "sp-like",
+      "label": "Like",
+      "icon": "💚",
+      "color": "#1db954",
+      "cmd": "builtin:keys",
+      "args": "alt+shift+b",
+      "toggle": false
+    },
+    {
+      "id": "sp-shuffle",
+      "label": "Shuffle",
+      "icon": "🔀",
+      "color": "#1db954",
+      "cmd": "builtin:keys",
+      "args": "ctrl+s",
+      "toggle": false
+    },
+    {
+      "id": "sp-repeat",
+      "label": "Repeat",
+      "icon": "🔁",
+      "color": "#1db954",
+      "cmd": "builtin:keys",
+      "args": "ctrl+r",
+      "toggle": false
+    },
+    {
+      "id": "sp-volup",
+      "label": "Volume up",
+      "icon": "🔊",
+      "color": "#1db954",
+      "cmd": "builtin:keys",
+      "args": "ctrl+up",
+      "toggle": false
+    },
+    {
+      "id": "sp-voldown",
+      "label": "Volume down",
+      "icon": "🔉",
+      "color": "#1db954",
+      "cmd": "builtin:keys",
+      "args": "ctrl+down",
+      "toggle": false
+    },
+    {
+      "id": "dc-mute",
+      "label": "Mute mic",
+      "icon": "🎙️",
+      "color": "#5865f2",
+      "cmd": "builtin:keys",
+      "args": "ctrl+shift+m",
+      "toggle": false
+    },
+    {
+      "id": "dc-deafen",
+      "label": "Deafen",
+      "icon": "🎧",
+      "color": "#5865f2",
+      "cmd": "builtin:keys",
+      "args": "ctrl+shift+d",
+      "toggle": false
+    },
+    {
+      "id": "dc-switch",
+      "label": "Quick switch",
+      "icon": "🔎",
+      "color": "#5865f2",
+      "cmd": "builtin:keys",
+      "args": "ctrl+k",
+      "toggle": false
+    },
+    {
+      "id": "dc-read",
+      "label": "Mark read",
+      "icon": "✔️",
+      "color": "#5865f2",
+      "cmd": "builtin:keys",
+      "args": "esc",
+      "toggle": false
+    },
+    {
+      "id": "dc-answer",
+      "label": "Answer call",
+      "icon": "📞",
+      "color": "#5865f2",
+      "cmd": "builtin:keys",
+      "args": "ctrl+enter",
+      "toggle": false
+    },
+    {
+      "id": "dc-unread",
+      "label": "Next unread",
+      "icon": "📩",
+      "color": "#5865f2",
+      "cmd": "builtin:keys",
+      "args": "alt+shift+down",
+      "toggle": false
+    },
+    {
+      "id": "dc-up",
+      "label": "Scroll up",
+      "icon": "⬆️",
+      "color": "#5865f2",
+      "cmd": "builtin:keys",
+      "args": "pageup",
+      "toggle": false
+    },
+    {
+      "id": "dc-down",
+      "label": "Scroll down",
+      "icon": "⬇️",
+      "color": "#5865f2",
+      "cmd": "builtin:keys",
+      "args": "pagedown",
+      "toggle": false
+    },
+    {
+      "id": "cd-enter",
+      "label": "Enter",
+      "icon": "↩️",
+      "color": "#d97757",
+      "cmd": "builtin:keys",
+      "args": "enter",
+      "toggle": false
+    },
+    {
+      "id": "cd-esc",
+      "label": "Esc / stop",
+      "icon": "⏹️",
+      "color": "#d97757",
+      "cmd": "builtin:keys",
+      "args": "esc",
+      "toggle": false
+    },
+    {
+      "id": "cd-ctrlc",
+      "label": "Ctrl+C",
+      "icon": "✋",
+      "color": "#d97757",
+      "cmd": "builtin:keys",
+      "args": "ctrl+c",
+      "toggle": false
+    },
+    {
+      "id": "cd-up",
+      "label": "Previous",
+      "icon": "⬆️",
+      "color": "#d97757",
+      "cmd": "builtin:keys",
+      "args": "up",
+      "toggle": false
+    },
+    {
+      "id": "cd-usage",
+      "label": "/usage",
+      "icon": "📊",
+      "color": "#d97757",
+      "cmd": "builtin:macro",
+      "steps": [
+        "text:/usage",
+        "keys:enter"
+      ],
+      "toggle": false
+    },
+    {
+      "id": "cd-clear",
+      "label": "/clear",
+      "icon": "🧹",
+      "color": "#d97757",
+      "cmd": "builtin:macro",
+      "steps": [
+        "text:/clear",
+        "keys:enter"
+      ],
+      "toggle": false
+    },
+    {
+      "id": "cd-save",
+      "label": "Save",
+      "icon": "💾",
+      "color": "#d97757",
+      "cmd": "builtin:keys",
+      "args": "ctrl+s",
+      "toggle": false
+    },
+    {
+      "id": "cd-undo",
+      "label": "Undo",
+      "icon": "↩",
+      "color": "#d97757",
+      "cmd": "builtin:keys",
+      "args": "ctrl+z",
+      "toggle": false
+    },
+    {
+      "id": "dk-prev",
+      "label": "Previous",
+      "icon": "◀️",
+      "color": "#f59e0b",
+      "cmd": "builtin:keys",
+      "args": "pageup",
+      "toggle": false
+    },
+    {
+      "id": "dk-next",
+      "label": "Next",
+      "icon": "▶️",
+      "color": "#f59e0b",
+      "cmd": "builtin:keys",
+      "args": "pagedown",
+      "toggle": false
+    },
+    {
+      "id": "dk-zin",
+      "label": "Zoom in",
+      "icon": "➕",
+      "color": "#f59e0b",
+      "cmd": "builtin:keys",
+      "args": "ctrl+equals",
+      "toggle": false
+    },
+    {
+      "id": "dk-zout",
+      "label": "Zoom out",
+      "icon": "➖",
+      "color": "#f59e0b",
+      "cmd": "builtin:keys",
+      "args": "ctrl+minus",
+      "toggle": false
+    },
+    {
+      "id": "dk-save",
+      "label": "Save",
+      "icon": "💾",
+      "color": "#f59e0b",
+      "cmd": "builtin:keys",
+      "args": "ctrl+s",
+      "toggle": false
+    },
+    {
+      "id": "dk-undo",
+      "label": "Undo",
+      "icon": "↩",
+      "color": "#f59e0b",
+      "cmd": "builtin:keys",
+      "args": "ctrl+z",
+      "toggle": false
+    },
+    {
+      "id": "dk-find",
+      "label": "Find",
+      "icon": "🔎",
+      "color": "#f59e0b",
+      "cmd": "builtin:keys",
+      "args": "ctrl+f",
+      "toggle": false
+    },
+    {
+      "id": "dk-show",
+      "label": "Slideshow",
+      "icon": "📽️",
+      "color": "#f59e0b",
+      "cmd": "builtin:keys",
+      "args": "f5",
+      "toggle": false
+    },
+    {
+      "id": "alt-tab",
+      "label": "Switch app",
+      "icon": "🔀",
+      "color": "#64748b",
+      "cmd": "builtin:keys",
+      "args": "alt+tab",
+      "toggle": false
+    },
+    {
+      "id": "os-desktop",
+      "label": "Show desktop",
+      "icon": "🏠",
+      "color": "#64748b",
+      "cmd": "builtin:keys",
+      "args": "win+d",
+      "toggle": false
+    },
+    {
+      "id": "os-files",
+      "label": "Files",
+      "icon": "📁",
+      "color": "#64748b",
+      "cmd": "builtin:keys",
+      "args": "win+e",
+      "toggle": false
+    },
+    {
+      "id": "shot",
+      "label": "Screenshot",
+      "icon": "📸",
+      "color": "#64748b",
+      "cmd": "builtin:keys",
+      "args": "win+alt+printscreen",
+      "toggle": false
+    },
+    {
+      "id": "os-tasks",
+      "label": "Task view",
+      "icon": "🗂️",
+      "color": "#64748b",
+      "cmd": "builtin:keys",
+      "args": "win+tab",
+      "toggle": false
+    },
+    {
+      "id": "os-snip",
+      "label": "Snip",
+      "icon": "✂️",
+      "color": "#64748b",
+      "cmd": "builtin:keys",
+      "args": "win+shift+s",
+      "toggle": false
+    },
+    {
+      "id": "os-mute",
+      "label": "Mute",
+      "icon": "🔇",
+      "color": "#64748b",
+      "cmd": "builtin:keys",
+      "args": "mute",
+      "toggle": false
+    },
+    {
+      "id": "lock",
+      "label": "Lock",
+      "icon": "🔒",
+      "color": "#64748b",
+      "cmd": "builtin:keys",
+      "args": "win+l",
+      "toggle": false
+    }
+  ],
+  "rules": [
+    {
+      "id": "r-ai",
+      "name": "AI needs me → AI work",
+      "enabled": true,
+      "when": "session-waiting",
+      "then": "goto",
+      "whileActive": true,
+      "priority": 8,
+      "page": "ai"
+    },
+    {
+      "id": "r-game",
+      "name": "Game running → Gaming",
+      "enabled": true,
+      "when": "process-running",
+      "then": "goto",
+      "whileActive": true,
+      "priority": 6,
+      "match": "cs2|FC25|FC26",
+      "page": "gaming",
+      "forSec": 10
+    },
+    {
+      "id": "r-study",
+      "name": "Study hours → Study",
+      "enabled": true,
+      "when": "time",
+      "then": "goto",
+      "whileActive": true,
+      "priority": 4,
+      "match": "19:00-22:00",
+      "days": "sun,mon,tue,wed,thu",
+      "page": "study"
+    },
+    {
+      "id": "r-cpu",
+      "name": "CPU working hard",
+      "enabled": true,
+      "when": "cpu-above",
+      "then": "notify",
+      "whileActive": true,
+      "priority": 3,
+      "value": 90,
+      "text": "PC is working hard: {detail}",
+      "level": "warn",
+      "forSec": 30,
+      "cooldownMin": 15
+    },
+    {
+      "id": "r-ping",
+      "name": "Internet slow",
+      "enabled": true,
+      "when": "ping-high",
+      "then": "notify",
+      "whileActive": true,
+      "priority": 3,
+      "text": "Internet is slow: {detail}",
+      "level": "warn",
+      "cooldownMin": 10
+    },
+    {
+      "id": "r-afk",
+      "name": "Away 10 min → Night",
+      "enabled": true,
+      "when": "idle",
+      "then": "goto",
+      "whileActive": true,
+      "priority": 2,
+      "value": 10,
+      "page": "night"
+    },
+    {
+      "id": "r-late",
+      "name": "Late night → Night",
+      "enabled": true,
+      "when": "time",
+      "then": "goto",
+      "whileActive": true,
+      "priority": 2,
+      "match": "23:30-07:00",
+      "page": "night"
+    },
+    {
+      "id": "r-app-opera",
+      "name": "In Opera → its buttons",
+      "enabled": true,
+      "when": "app-in-front",
+      "then": "goto",
+      "whileActive": true,
+      "priority": 3,
+      "match": "opera|chrome|msedge|brave|firefox",
+      "page": "live-opera",
+      "forSec": 1,
+      "countdownSec": 0
+    },
+    {
+      "id": "r-app-spotify",
+      "name": "In Spotify → its buttons",
+      "enabled": true,
+      "when": "app-in-front",
+      "then": "goto",
+      "whileActive": true,
+      "priority": 3,
+      "match": "Spotify",
+      "page": "live-spotify",
+      "forSec": 1,
+      "countdownSec": 0
+    },
+    {
+      "id": "r-app-discord",
+      "name": "In Discord → its buttons",
+      "enabled": true,
+      "when": "app-in-front",
+      "then": "goto",
+      "whileActive": true,
+      "priority": 3,
+      "match": "Discord",
+      "page": "live-discord",
+      "forSec": 1,
+      "countdownSec": 0
+    },
+    {
+      "id": "r-app-code",
+      "name": "In Claude & code → its buttons",
+      "enabled": true,
+      "when": "app-in-front",
+      "then": "goto",
+      "whileActive": true,
+      "priority": 3,
+      "match": "claude|Code|WindowsTerminal|powershell|pwsh",
+      "page": "live-code",
+      "forSec": 1,
+      "countdownSec": 0
+    },
+    {
+      "id": "r-app-docs",
+      "name": "In Study apps → its buttons",
+      "enabled": true,
+      "when": "app-in-front",
+      "then": "goto",
+      "whileActive": true,
+      "priority": 3,
+      "match": "WINWORD|EXCEL|POWERPNT|Acrobat|AcroRd32|Notion|Obsidian",
+      "page": "live-docs",
+      "forSec": 1,
+      "countdownSec": 0
+    }
+  ]
+}
